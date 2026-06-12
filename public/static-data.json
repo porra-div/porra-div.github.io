@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-12T18:52:21.114Z",
+  "generatedAt": "2026-06-12T19:27:14.879Z",
   "participants": [
     {
       "id": "excel-mundial-2026-adri-xlsx",
@@ -15985,7 +15985,8 @@
       "Iran",
       "Croatia"
     ],
-    "fetchedAt": "2026-06-12T18:52:21.109Z",
-    "source": "https://worldcup26.ir"
+    "fetchedAt": "2026-06-12T19:00:35.957Z",
+    "source": "https://worldcup26.ir (cache)",
+    "apiWarning": "No se pudo refrescar la API: This operation was aborted. Usando caché."
   }
 }

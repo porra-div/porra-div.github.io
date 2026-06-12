@@ -864,7 +864,7 @@ function drawBall(ctx) {
 }
 
 function goalRect(width, height) {
-  return { x: width * 0.25, y: height * 0.1, w: width * 0.5, h: height * 0.2 };
+  return { x: width * 0.2, y: height * 0.1, w: width * 0.6, h: height * 0.22 };
 }
 
 function targetRect(width, height) {
