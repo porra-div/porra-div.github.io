@@ -20,95 +20,92 @@
 
     <section id="alerts" class="alerts"></section>
 
-    <nav class="tabs" aria-label="Secciones">
-      <button class="tab-button active" data-tab="dashboard">Clasificación</button>
-      <button class="tab-button" data-tab="predictions">Predicciones</button>
-    </nav>
+    <section class="grid kpis" id="funFacts"></section>
 
-    <section id="dashboardView" class="tab-view active">
-      <section class="grid kpis" id="funFacts"></section>
-
-      <main class="layout">
-        <section class="card leaderboard-card">
-          <div class="card-header">
-            <div>
-              <h2>Clasificación</h2>
-            </div>
-            <input id="searchInput" type="search" placeholder="Buscar participante…">
-          </div>
-          <div class="table-wrap">
-            <table id="leaderboardTable">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Participante</th>
-                  <th>Total</th>
-                  <th>Exactos</th>
-                  <th>Grupos</th>
-                  <th>1/16</th>
-                  <th>1/8</th>
-                  <th>1/4</th>
-                  <th>Semis</th>
-                  <th>Honor</th>
-                  <th>Premios</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
-        </section>
-
-        <aside class="card details-card">
-          <div class="card-header">
-            <div>
-              <h2>Detalle del jugador</h2>
-              <p id="detailSubtitle"></p>
-            </div>
-          </div>
-          <div id="participantDetails" class="details"></div>
-        </aside>
-      </main>
-
-      <section class="grid two-cols">
-        <article class="card">
-          <div class="card-header">
-            <div>
-              <h2>Partidos</h2>
-            </div>
-          </div>
-          <div id="matchesList" class="match-list"></div>
-        </article>
-
-        <article class="card">
-          <div class="card-header">
-            <div>
-              <h2>Cuadro y clasificados</h2>
-            </div>
-          </div>
-          <div id="qualifiedList" class="qualified-list"></div>
-        </article>
-      </section>
-
-      <section class="card">
+    <main class="layout">
+      <section class="card leaderboard-card">
         <div class="card-header">
           <div>
-            <h2>Grupos</h2>
+            <h2>Clasificación</h2>
           </div>
-          <select id="groupSelect" aria-label="Seleccionar grupo"></select>
+          <input id="searchInput" type="search" placeholder="Buscar participante…">
         </div>
-        <div id="groupsGrid" class="groups-grid"></div>
+        <div class="table-wrap">
+          <table id="leaderboardTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Participante</th>
+                <th>Total</th>
+                <th>Exactos</th>
+                <th>Grupos</th>
+                <th>1/16</th>
+                <th>1/8</th>
+                <th>1/4</th>
+                <th>Semis</th>
+                <th>Honor</th>
+                <th>Premios</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </section>
+
+      <aside class="card details-card">
+        <div class="card-header">
+          <div>
+            <h2>Detalle del jugador</h2>
+            <p id="detailSubtitle"></p>
+          </div>
+        </div>
+        <div id="participantDetails" class="details"></div>
+      </aside>
+    </main>
+
+    <section class="grid two-cols">
+      <article class="card">
+        <div class="card-header">
+          <div>
+            <h2>Partidos</h2>
+          </div>
+        </div>
+        <div id="matchesList" class="match-list"></div>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <div>
+            <h2>Cuadro y clasificados</h2>
+          </div>
+        </div>
+        <div id="qualifiedList" class="qualified-list"></div>
+      </article>
     </section>
 
-    <section id="predictionsView" class="tab-view">
+    <section class="card groups-section">
       <div class="card-header">
         <div>
-          <h2>Predicciones</h2>
+          <h2>Grupos</h2>
         </div>
-        <select id="predictionParticipantSelect" aria-label="Seleccionar participante"></select>
+        <select id="groupSelect" aria-label="Seleccionar grupo"></select>
+      </div>
+      <div id="groupsGrid" class="groups-grid"></div>
+    </section>
+  </div>
+
+  <div id="predictionsModal" class="modal" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true" aria-labelledby="predictionsTitle">
+      <div class="modal-header">
+        <div>
+          <h2 id="predictionsTitle">Predicciones</h2>
+          <p id="predictionsSubtitle"></p>
+        </div>
+        <button id="closePredictionsBtn" class="icon-button" type="button">Cerrar</button>
       </div>
       <div id="predictionsContent"></div>
-    </section>
+    </div>
   </div>
 
   <script src="static-engine.js"></script>

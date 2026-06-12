@@ -3,7 +3,6 @@ let selectedParticipantId = null;
 let selectedPredictionParticipantId = null;
 let selectedGroup = '';
 let filter = '';
-let activeTab = 'dashboard';
 
 const $ = (selector) => document.querySelector(selector);
 const fmtDate = (value) => value ? new Date(value).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '—';
@@ -149,7 +148,7 @@ function renderLeaderboard() {
   const html = rows.map((p) => `
     <tr data-id="${esc(p.id)}" class="${p.id === selectedParticipantId ? 'active' : ''}">
       <td><span class="rank ${p.rank <= 3 ? 'top' : ''}">${p.rank}</span></td>
-      <td><strong>${esc(p.name)}</strong><div class="muted">${esc(p.file)}</div></td>
+      <td><strong>${esc(p.name)}</strong></td>
       <td><span class="total">${p.total}</span></td>
       <td>${p.exactScores}</td>
       <td><span class="stage-chip">${p.breakdown.group || 0}</span></td>
@@ -159,16 +158,22 @@ function renderLeaderboard() {
       <td><span class="stage-chip">${p.breakdown.semi || 0}</span></td>
       <td><span class="stage-chip">${p.breakdown.honor || 0}</span></td>
       <td><span class="stage-chip">${p.breakdown.awards || 0}</span></td>
+      <td><button class="small-button prediction-open" data-id="${esc(p.id)}" type="button">Predicciones</button></td>
     </tr>
   `).join('');
-  $('#leaderboardTable tbody').innerHTML = html || `<tr><td colspan="11" class="empty">No hay participantes que coincidan con la búsqueda.</td></tr>`;
+  $('#leaderboardTable tbody').innerHTML = html || `<tr><td colspan="12" class="empty">No hay participantes que coincidan con la búsqueda.</td></tr>`;
   document.querySelectorAll('#leaderboardTable tbody tr[data-id]').forEach((row) => {
     row.addEventListener('click', () => {
       selectedParticipantId = row.dataset.id;
       selectedPredictionParticipantId = row.dataset.id;
       renderLeaderboard();
       renderParticipantDetails();
-      renderPredictions();
+    });
+  });
+  document.querySelectorAll('.prediction-open').forEach((btn) => {
+    btn.addEventListener('click', (ev) => {
+      ev.stopPropagation();
+      openPredictions(btn.dataset.id);
     });
   });
 }
@@ -182,13 +187,18 @@ function renderParticipantDetails() {
   }
   $('#detailSubtitle').textContent = `${person.name} · ${person.total} puntos · ${person.exactScores} exactos`;
   const events = person.events || [];
-  $('#participantDetails').innerHTML = events.length ? events.map((e) => `
+  const predictionButton = `<button class="small-button wide prediction-open-detail" data-id="${esc(person.id)}" type="button">Ver predicciones</button>`;
+  $('#participantDetails').innerHTML = predictionButton + (events.length ? events.map((e) => `
     <div class="detail-event">
       <strong>${esc(e.label || e.type)} <span class="points-pill">+${e.points}</span></strong>
       <div class="detail-meta">Predicción: ${esc(e.prediction || '')}${e.actual ? ` · Real: ${esc(e.actual)}` : ''}</div>
       ${e.details ? `<div class="detail-meta">${esc(e.details)}</div>` : ''}
     </div>
-  `).join('') : `<div class="empty">Todavía no tiene aciertos computados.</div>`;
+  `).join('') : `<div class="empty">Todavía no tiene aciertos computados.</div>`);
+  document.querySelector('.prediction-open-detail')?.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    openPredictions(ev.currentTarget.dataset.id);
+  });
 }
 
 function renderMatches() {
@@ -283,21 +293,22 @@ function renderGroups() {
   `;
 }
 
-function renderTabs() {
-  document.querySelectorAll('.tab-button').forEach((btn) => {
-    btn.classList.toggle('active', btn.dataset.tab === activeTab);
-  });
-  document.querySelectorAll('.tab-view').forEach((view) => {
-    view.classList.toggle('active', view.id === `${activeTab}View`);
-  });
+function openPredictions(participantId) {
+  selectedPredictionParticipantId = participantId || selectedParticipantId;
+  renderPredictionsPanel();
+  $('#predictionsModal').classList.add('open');
+  $('#predictionsModal').setAttribute('aria-hidden', 'false');
 }
 
-function renderPredictions() {
+function closePredictions() {
+  $('#predictionsModal').classList.remove('open');
+  $('#predictionsModal').setAttribute('aria-hidden', 'true');
+}
+
+function renderPredictionsPanel() {
   const participants = state.participants || [];
-  const select = $('#predictionParticipantSelect');
   const content = $('#predictionsContent');
   if (!participants.length) {
-    select.innerHTML = '';
     content.innerHTML = `<div class="empty">No hay predicciones cargadas.</div>`;
     return;
   }
@@ -306,11 +317,13 @@ function renderPredictions() {
     selectedPredictionParticipantId = selectedParticipantId || participants[0].id;
   }
   const person = participants.find((p) => p.id === selectedPredictionParticipantId) || participants[0];
-  select.innerHTML = participants
-    .map((p) => `<option value="${esc(p.id)}" ${p.id === person.id ? 'selected' : ''}>${esc(p.name)}</option>`)
-    .join('');
+  $('#predictionsTitle').textContent = `Predicciones de ${person.name}`;
+  $('#predictionsSubtitle').textContent = 'Verde acertado · Rojo fallado · Amarillo pendiente';
 
   content.innerHTML = `
+    <div class="prediction-player-list">
+      ${participants.map((p) => `<button class="small-button ${p.id === person.id ? 'active' : ''}" data-prediction-player="${esc(p.id)}" type="button">${esc(p.name)}</button>`).join('')}
+    </div>
     <div class="prediction-grid">
       ${predictionMatchesTable(person)}
       ${predictionGroupTable(person)}
@@ -318,6 +331,15 @@ function renderPredictions() {
       ${predictionHonorTable(person)}
     </div>
   `;
+  document.querySelectorAll('[data-prediction-player]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      selectedPredictionParticipantId = btn.dataset.predictionPlayer;
+      selectedParticipantId = btn.dataset.predictionPlayer;
+      renderLeaderboard();
+      renderParticipantDetails();
+      renderPredictionsPanel();
+    });
+  });
 }
 
 function predictionMatchesTable(person) {
@@ -325,16 +347,20 @@ function predictionMatchesTable(person) {
   return predictionSection('Partidos', `
     <div class="excel-wrap">
       <table class="excel-table predictions-matches">
-        <thead><tr><th>#</th><th>Fase</th><th>Partido</th><th>Pronóstico</th></tr></thead>
+        <thead><tr><th>#</th><th>Fase</th><th>Partido</th><th>Pronóstico</th><th>Real</th><th>Estado</th></tr></thead>
         <tbody>
-          ${rows.map((m) => `
-            <tr>
+          ${rows.map((m) => {
+            const status = matchPredictionStatus(m);
+            return `
+            <tr class="${status.className}">
               <td>${m.matchNumber}</td>
               <td>${esc(stageName(m.stage))}</td>
               <td>${esc(m.label || `${m.homeLabel || ''}-${m.awayLabel || ''}`)}</td>
               <td><strong>${esc(formatPredictionScore(m))}</strong></td>
+              <td>${esc(status.actualText)}</td>
+              <td><span class="status-pill">${esc(status.label)}</span></td>
             </tr>
-          `).join('')}
+          `}).join('')}
         </tbody>
       </table>
     </div>
@@ -346,11 +372,12 @@ function predictionGroupTable(person) {
   return predictionSection('Grupos', `
     <div class="excel-wrap">
       <table class="excel-table">
-        <thead><tr><th>Grupo</th><th>Posición</th><th>Equipo</th></tr></thead>
+        <thead><tr><th>Grupo</th><th>Posición</th><th>Equipo</th><th>Estado</th></tr></thead>
         <tbody>
-          ${rows.map((r) => `
-            <tr><td>${esc(r.group)}</td><td>${r.position}</td><td><strong>${esc(r.value || r.team)}</strong></td></tr>
-          `).join('')}
+          ${rows.map((r) => {
+            const status = groupPredictionStatus(r);
+            return `<tr class="${status.className}"><td>${esc(r.group)}</td><td>${r.position}</td><td><strong>${esc(r.value || r.team)}</strong></td><td><span class="status-pill">${esc(status.label)}</span></td></tr>`;
+          }).join('')}
         </tbody>
       </table>
     </div>
@@ -368,14 +395,17 @@ function predictionQualifiersTable(person) {
   };
   const qualifiers = person.predictions?.qualifiers || {};
   const rows = Object.entries(labels).flatMap(([key, label]) =>
-    (qualifiers[key] || []).filter((item) => item.value || item.team).map((item) => ({ label, team: item.value || item.team }))
+    (qualifiers[key] || []).filter((item) => item.value || item.team).map((item) => ({ key, label, team: item.value || item.team }))
   );
   return predictionSection('Clasificados', `
     <div class="excel-wrap">
       <table class="excel-table">
-        <thead><tr><th>Ronda</th><th>Equipo</th></tr></thead>
+        <thead><tr><th>Ronda</th><th>Equipo</th><th>Estado</th></tr></thead>
         <tbody>
-          ${rows.map((r) => `<tr><td>${esc(r.label)}</td><td><strong>${esc(r.team)}</strong></td></tr>`).join('')}
+          ${rows.map((r) => {
+            const status = qualifierPredictionStatus(r.key, r.team);
+            return `<tr class="${status.className}"><td>${esc(r.label)}</td><td><strong>${esc(r.team)}</strong></td><td><span class="status-pill">${esc(status.label)}</span></td></tr>`;
+          }).join('')}
         </tbody>
       </table>
     </div>
@@ -418,6 +448,59 @@ function formatPredictionScore(match) {
   return `${teams}${match.sign || ''}|${match.homeGoals}-${match.awayGoals}`;
 }
 
+function matchPredictionStatus(prediction) {
+  const actual = (state.dashboard?.actual?.matches || []).find((m) => Number(m.matchNumber) === Number(prediction.matchNumber));
+  if (!prediction?.valid || !actual?.finished) {
+    return { className: 'status-pending', label: 'Pendiente', actualText: actual ? `${actual.homeScore ?? '-'}-${actual.awayScore ?? '-'}` : '' };
+  }
+  const exact = Number(prediction.homeGoals) === Number(actual.homeScore) && Number(prediction.awayGoals) === Number(actual.awayScore);
+  const sign = scoreSign(prediction.homeGoals, prediction.awayGoals) === scoreSign(actual.homeScore, actual.awayScore);
+  return {
+    className: exact || sign ? 'status-hit' : 'status-miss',
+    label: exact ? 'Exacto' : (sign ? 'Signo' : 'Fallado'),
+    actualText: `${actual.homeScore}-${actual.awayScore}`
+  };
+}
+
+function groupPredictionStatus(prediction) {
+  const completed = state.dashboard?.actual?.completedByGroup?.[prediction.group] || 0;
+  if (completed < 6) return { className: 'status-pending', label: 'Pendiente' };
+  const actualTeam = state.dashboard?.actual?.groups?.[prediction.group]?.[prediction.position - 1]?.team || '';
+  return sameTextTeam(prediction.team || prediction.value, actualTeam)
+    ? { className: 'status-hit', label: 'Acertado' }
+    : { className: 'status-miss', label: 'Fallado' };
+}
+
+function qualifierPredictionStatus(key, team) {
+  const actual = state.dashboard?.actual?.qualified?.[key] || [];
+  if (!actual.length) return { className: 'status-pending', label: 'Pendiente' };
+  return actual.some((candidate) => sameTextTeam(candidate, team))
+    ? { className: 'status-hit', label: 'Acertado' }
+    : { className: 'status-miss', label: 'Fallado' };
+}
+
+function scoreSign(home, away) {
+  const h = Number(home);
+  const a = Number(away);
+  if (!Number.isFinite(h) || !Number.isFinite(a)) return '';
+  if (h > a) return '1';
+  if (h < a) return '2';
+  return 'X';
+}
+
+function sameTextTeam(a, b) {
+  return normalizeText(a) && normalizeText(a) === normalizeText(b);
+}
+
+function normalizeText(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim();
+}
+
 function groupLetters(groups, matches) {
   const set = new Set(Object.keys(groups || {}));
   for (const match of matches || []) {
@@ -444,7 +527,6 @@ function groupRows(group, groups, matches) {
 }
 
 function render() {
-  renderTabs();
   renderStatus();
   renderAlerts();
   renderFunFacts();
@@ -453,7 +535,6 @@ function render() {
   renderMatches();
   renderQualified();
   renderGroups();
-  renderPredictions();
 }
 
 $('#refreshBtn').addEventListener('click', forceRefresh);
@@ -467,19 +548,9 @@ $('#groupSelect').addEventListener('change', (ev) => {
   renderGroups();
 });
 
-$('#predictionParticipantSelect').addEventListener('change', (ev) => {
-  selectedPredictionParticipantId = ev.target.value;
-  selectedParticipantId = ev.target.value;
-  renderLeaderboard();
-  renderParticipantDetails();
-  renderPredictions();
-});
-
-document.querySelectorAll('.tab-button').forEach((btn) => {
-  btn.addEventListener('click', () => {
-    activeTab = btn.dataset.tab;
-    renderTabs();
-  });
+$('#closePredictionsBtn').addEventListener('click', closePredictions);
+$('#predictionsModal').addEventListener('click', (ev) => {
+  if (ev.target.id === 'predictionsModal') closePredictions();
 });
 
 loadDashboard();

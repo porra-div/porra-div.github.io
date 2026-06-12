@@ -21,8 +21,8 @@ body {
   min-height: 100vh;
   color: var(--text);
   background:
-    linear-gradient(180deg, rgba(255, 204, 41, 0.16), transparent 300px),
-    linear-gradient(135deg, #4c0011 0%, #150006 48%, #2b020b 100%);
+    linear-gradient(180deg, rgba(255, 204, 41, 0.28) 0 26%, rgba(198, 16, 46, 0.08) 26% 72%, rgba(255, 204, 41, 0.18) 72% 100%),
+    linear-gradient(135deg, #8b001f 0%, #3a000d 50%, #180006 100%);
 }
 
 body::before {
@@ -31,7 +31,7 @@ body::before {
   inset: 0;
   pointer-events: none;
   background:
-    linear-gradient(90deg, rgba(198, 16, 46, 0.30), transparent 28%, transparent 72%, rgba(255, 204, 41, 0.18)),
+    linear-gradient(90deg, rgba(255, 204, 41, 0.16), transparent 20%, transparent 80%, rgba(198, 16, 46, 0.20)),
     repeating-linear-gradient(135deg, rgba(255,255,255,0.045) 0 1px, transparent 1px 18px);
   opacity: 0.65;
 }
@@ -89,6 +89,15 @@ button {
 }
 
 button:disabled { opacity: .65; cursor: wait; }
+.small-button {
+  padding: 7px 10px;
+  border-radius: 7px;
+  font-size: 12px;
+  box-shadow: none;
+}
+.small-button.wide { width: 100%; margin-bottom: 8px; }
+.small-button.active { outline: 2px solid rgba(255,255,255,.42); }
+.icon-button { box-shadow: none; }
 input { min-width: 220px; outline: none; }
 select { min-width: 150px; outline: none; font-weight: 800; }
 
@@ -105,27 +114,6 @@ select { min-width: 150px; outline: none; font-weight: 800; }
 
 .alerts { margin: 14px 0; display: grid; gap: 8px; }
 .alert { padding: 12px 14px; border-radius: 8px; border: 1px solid rgba(255,122,122,.35); background: rgba(255,122,122,.12); color: #ffe1d8; }
-
-.tabs {
-  display: flex;
-  gap: 8px;
-  margin: 14px 0;
-}
-
-.tab-button {
-  background: rgba(50, 0, 12, 0.64);
-  color: var(--text);
-  border: 1px solid var(--border);
-  box-shadow: none;
-}
-
-.tab-button.active {
-  background: linear-gradient(135deg, var(--yellow), #f6a700);
-  color: #320008;
-}
-
-.tab-view { display: none; }
-.tab-view.active { display: block; }
 
 .grid { display: grid; gap: 12px; }
 .kpis { grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); margin: 14px 0; }
@@ -209,7 +197,8 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 .group-card { border: 1px solid var(--border); border-radius: 8px; padding: 13px; background: var(--panel); }
 .group-card.featured { min-height: 260px; }
 .group-card h3 { margin: 0 0 8px; color: #fff1c6; }
-.group-row { display: grid; grid-template-columns: 26px 1fr 36px 40px; gap: 8px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,.10); }
+.group-row { display: grid; grid-template-columns: 26px 1fr 36px 40px; gap: 8px; padding: 9px 0; border-bottom: 1px solid rgba(255,255,255,.10); }
+.group-row span:first-child { color: var(--yellow); font-weight: 900; }
 .group-row:last-child { border-bottom: none; }
 
 .mini-matches { display: grid; gap: 7px; }
@@ -222,12 +211,46 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 }
 .mini-match.finished strong { color: var(--yellow); }
 
-#predictionsView {
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: none;
+  padding: 22px;
+  background: rgba(12, 0, 4, .78);
+  overflow: auto;
+}
+
+.modal.open { display: block; }
+
+.modal-panel {
+  width: min(1320px, 100%);
+  margin: 0 auto;
   border: 1px solid var(--border);
-  background: rgba(38, 0, 10, .82);
+  background:
+    linear-gradient(180deg, rgba(198, 16, 46, .22), transparent 180px),
+    #26000a;
   border-radius: 8px;
   padding: 16px;
-  box-shadow: 0 14px 38px rgba(0, 0, 0, .22);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, .48);
+}
+
+.modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.modal-header h2 { margin: 0; color: #fff1c6; }
+.modal-header p { margin: 5px 0 0; color: var(--muted); }
+
+.prediction-player-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .prediction-grid {
@@ -282,6 +305,19 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 
 .excel-table tr:nth-child(even) td {
   background: rgba(255,255,255,.045);
+}
+
+.excel-table tr.status-hit td { background: rgba(46, 160, 67, .22); }
+.excel-table tr.status-miss td { background: rgba(198, 16, 46, .28); }
+.excel-table tr.status-pending td { background: rgba(255, 204, 41, .18); color: #fff6d6; }
+
+.status-pill {
+  display: inline-flex;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.14);
+  font-weight: 900;
+  font-size: 11px;
 }
 
 .predictions-matches {
