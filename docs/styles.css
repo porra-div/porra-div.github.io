@@ -283,6 +283,93 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
   grid-row: span 3;
 }
 
+.prediction-stage-list {
+  display: grid;
+  gap: 14px;
+  max-height: 720px;
+  overflow: auto;
+  padding: 12px;
+}
+
+.prediction-stage h4 {
+  margin: 0 0 8px;
+  color: var(--yellow-soft);
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.prediction-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 8px;
+}
+
+.prediction-match-card {
+  min-height: 132px;
+  padding: 11px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255,255,255,.06);
+  display: grid;
+  gap: 8px;
+}
+
+.prediction-match-card.status-exact {
+  background:
+    linear-gradient(135deg, rgba(255, 204, 41, .18), rgba(46, 160, 67, .36));
+  border-color: var(--yellow);
+  box-shadow: inset 0 0 0 2px rgba(255, 204, 41, .38), 0 10px 24px rgba(0,0,0,.18);
+}
+
+.prediction-match-card.status-hit {
+  background: rgba(46, 160, 67, .22);
+  border-color: rgba(46, 160, 67, .60);
+}
+
+.prediction-match-card.status-miss {
+  background: rgba(198, 16, 46, .30);
+  border-color: rgba(255, 116, 116, .50);
+}
+
+.prediction-match-card.status-pending {
+  background: rgba(255, 204, 41, .18);
+  border-color: rgba(255, 204, 41, .45);
+}
+
+.prediction-match-top,
+.prediction-score-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  align-items: center;
+}
+
+.prediction-match-top > span:first-child {
+  color: var(--yellow-soft);
+  font-weight: 950;
+}
+
+.prediction-match-title {
+  font-weight: 950;
+  line-height: 1.2;
+}
+
+.prediction-score-row > div {
+  display: grid;
+  gap: 2px;
+}
+
+.prediction-score-row span {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.prediction-score-row strong {
+  color: #fff1c6;
+  font-size: 16px;
+}
+
 .excel-wrap {
   overflow: auto;
   max-height: 620px;
@@ -327,6 +414,7 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
   background: rgba(255,255,255,.14);
   font-weight: 900;
   font-size: 11px;
+  white-space: nowrap;
 }
 
 .predictions-matches {
@@ -364,9 +452,9 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 }
 
 .bracket-match.status-exact {
-  background: rgba(46, 160, 67, .30);
+  background: linear-gradient(135deg, rgba(255, 204, 41, .20), rgba(46, 160, 67, .34));
   border-color: var(--yellow);
-  box-shadow: 0 0 0 2px rgba(255, 204, 41, .18);
+  box-shadow: 0 0 0 2px rgba(255, 204, 41, .26);
 }
 
 .bracket-match.status-hit { background: rgba(46, 160, 67, .22); border-color: rgba(46, 160, 67, .55); }

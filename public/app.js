@@ -325,7 +325,7 @@ function renderPredictionsPanel() {
       ${participants.map((p) => `<button class="small-button ${p.id === person.id ? 'active' : ''}" data-prediction-player="${esc(p.id)}" type="button">${esc(p.name)}</button>`).join('')}
     </div>
     <div class="prediction-grid predictions-only">
-      ${predictionMatchesTable(person)}
+      ${predictionMatchesBoard(person)}
       ${predictionBracket(person)}
     </div>
   `;
@@ -340,31 +340,58 @@ function renderPredictionsPanel() {
   });
 }
 
-function predictionMatchesTable(person) {
+function predictionMatchesBoard(person) {
   const rows = Object.values(person.predictions?.matches || {})
     .filter((m) => m.valid)
     .sort((a, b) => a.matchNumber - b.matchNumber);
+  const stages = [
+    ['group', 'Fase de grupos'],
+    ['round32', 'Dieciseisavos'],
+    ['round16', 'Octavos'],
+    ['quarter', 'Cuartos'],
+    ['semi', 'Semifinales'],
+    ['third', '3º y 4º puesto'],
+    ['final', 'Final']
+  ];
   return predictionSection('Predicciones', `
-    <div class="excel-wrap">
-      <table class="excel-table predictions-matches">
-        <thead><tr><th>#</th><th>Fase</th><th>Partido</th><th>Predicción</th><th>Real</th><th>Estado</th></tr></thead>
-        <tbody>
-          ${rows.map((m) => {
-            const status = matchPredictionStatus(m);
-            return `
-            <tr class="${status.className}">
-              <td>${m.matchNumber}</td>
-              <td>${esc(stageName(m.stage))}</td>
-              <td>${esc(m.label || `${m.homeLabel || ''}-${m.awayLabel || ''}`)}</td>
-              <td><strong>${esc(formatPredictionScore(m))}</strong></td>
-              <td>${esc(status.actualText)}</td>
-              <td><span class="status-pill">${esc(status.label)}</span></td>
-            </tr>
-          `}).join('')}
-        </tbody>
-      </table>
+    <div class="prediction-stage-list">
+      ${stages.map(([stage, label]) => {
+        const stageRows = rows.filter((m) => m.stage === stage);
+        if (!stageRows.length) return '';
+        return `
+          <section class="prediction-stage">
+            <h4>${esc(label)}</h4>
+            <div class="prediction-card-grid">
+              ${stageRows.map((m) => predictionMatchCard(m)).join('')}
+            </div>
+          </section>
+        `;
+      }).join('')}
     </div>
   `);
+}
+
+function predictionMatchCard(match) {
+  const status = matchPredictionStatus(match);
+  return `
+    <article class="prediction-match-card ${status.className}">
+      <div class="prediction-match-top">
+        <span>#${match.matchNumber}</span>
+        <span class="status-pill">${esc(status.label)}</span>
+      </div>
+      <div class="prediction-match-title">${esc(match.label || `${match.homeLabel || ''}-${match.awayLabel || ''}`)}</div>
+      <div class="prediction-score-row">
+        <div>
+          <span>Predicción</span>
+          <strong>${esc(formatPredictionScoreOnly(match))}</strong>
+        </div>
+        <div>
+          <span>Real</span>
+          <strong>${esc(status.actualText || 'Pendiente')}</strong>
+        </div>
+      </div>
+    </article>
+  `;
 }
 
 function predictionBracket(person) {
@@ -388,84 +415,13 @@ function predictionBracket(person) {
             return `
               <div class="bracket-match ${status.className}">
                 <div class="bracket-teams">${esc(bracketLabel(m))}</div>
-                <div class="bracket-score">${esc(formatPredictionScore(m))}</div>
+                <div class="bracket-score">${esc(formatPredictionScoreOnly(m))}</div>
                 <div class="bracket-state">${esc(status.label)}</div>
               </div>
             `;
           }).join('') || `<div class="muted">Pendiente</div>`}
         </div>
       `).join('')}
-    </div>
-  `);
-}
-
-function predictionGroupTable(person) {
-  const rows = person.predictions?.groupPositions || [];
-  return predictionSection('Grupos', `
-    <div class="excel-wrap">
-      <table class="excel-table">
-        <thead><tr><th>Grupo</th><th>Posición</th><th>Equipo</th><th>Estado</th></tr></thead>
-        <tbody>
-          ${rows.map((r) => {
-            const status = groupPredictionStatus(r);
-            return `<tr class="${status.className}"><td>${esc(r.group)}</td><td>${r.position}</td><td><strong>${esc(r.value || r.team)}</strong></td><td><span class="status-pill">${esc(status.label)}</span></td></tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>
-  `);
-}
-
-function predictionQualifiersTable(person) {
-  const labels = {
-    round32: 'Dieciseisavos',
-    round16: 'Octavos',
-    quarter: 'Cuartos',
-    semi: 'Semifinales',
-    thirdPlaceGame: '3º y 4º puesto',
-    final: 'Final'
-  };
-  const qualifiers = person.predictions?.qualifiers || {};
-  const rows = Object.entries(labels).flatMap(([key, label]) =>
-    (qualifiers[key] || []).filter((item) => item.value || item.team).map((item) => ({ key, label, team: item.value || item.team }))
-  );
-  return predictionSection('Clasificados', `
-    <div class="excel-wrap">
-      <table class="excel-table">
-        <thead><tr><th>Ronda</th><th>Equipo</th><th>Estado</th></tr></thead>
-        <tbody>
-          ${rows.map((r) => {
-            const status = qualifierPredictionStatus(r.key, r.team);
-            return `<tr class="${status.className}"><td>${esc(r.label)}</td><td><strong>${esc(r.team)}</strong></td><td><span class="status-pill">${esc(status.label)}</span></td></tr>`;
-          }).join('')}
-        </tbody>
-      </table>
-    </div>
-  `);
-}
-
-function predictionHonorTable(person) {
-  const podium = person.predictions?.podium || {};
-  const awards = person.predictions?.awards || {};
-  const rows = [
-    ['Campeón', podium.champion?.value],
-    ['Subcampeón', podium.runnerUp?.value],
-    ['3º puesto', podium.thirdPlace?.value],
-    ['Bota de Oro', awards.goldenBoot?.gold?.value],
-    ['Bota de Plata', awards.goldenBoot?.silver?.value],
-    ['Bota de Bronce', awards.goldenBoot?.bronze?.value],
-    ['Balón de Oro', awards.goldenBall?.gold?.value],
-    ['Balón de Plata', awards.goldenBall?.silver?.value],
-    ['Balón de Bronce', awards.goldenBall?.bronze?.value]
-  ];
-  return predictionSection('Honor y premios', `
-    <div class="excel-wrap">
-      <table class="excel-table">
-        <thead><tr><th>Concepto</th><th>Predicción</th></tr></thead>
-        <tbody>
-          ${rows.map(([label, value]) => `<tr><td>${esc(label)}</td><td><strong>${esc(value || '')}</strong></td></tr>`).join('')}
-        </tbody>
-      </table>
     </div>
   `);
 }
@@ -478,6 +434,11 @@ function formatPredictionScore(match) {
   if (!match?.valid) return match?.raw || '';
   const teams = match.prefix ? `${match.prefix} · ` : '';
   return `${teams}${match.sign || ''}|${match.homeGoals}-${match.awayGoals}`;
+}
+
+function formatPredictionScoreOnly(match) {
+  if (!match?.valid) return match?.raw || '';
+  return `${match.sign || ''}|${match.homeGoals}-${match.awayGoals}`;
 }
 
 function bracketLabel(match) {
@@ -495,26 +456,9 @@ function matchPredictionStatus(prediction) {
   const sign = scoreSign(prediction.homeGoals, prediction.awayGoals) === scoreSign(actual.homeScore, actual.awayScore);
   return {
     className: exact ? 'status-exact' : (sign ? 'status-hit' : 'status-miss'),
-    label: exact ? 'Exacto' : (sign ? 'Signo' : 'Fallado'),
+    label: exact ? 'Resultado exacto' : (sign ? 'Ganador/empate' : 'Fallado'),
     actualText: `${actual.homeScore}-${actual.awayScore}`
   };
-}
-
-function groupPredictionStatus(prediction) {
-  const completed = state.dashboard?.actual?.completedByGroup?.[prediction.group] || 0;
-  if (completed < 6) return { className: 'status-pending', label: 'Pendiente' };
-  const actualTeam = state.dashboard?.actual?.groups?.[prediction.group]?.[prediction.position - 1]?.team || '';
-  return sameTextTeam(prediction.team || prediction.value, actualTeam)
-    ? { className: 'status-hit', label: 'Acertado' }
-    : { className: 'status-miss', label: 'Fallado' };
-}
-
-function qualifierPredictionStatus(key, team) {
-  const actual = state.dashboard?.actual?.qualified?.[key] || [];
-  if (!actual.length) return { className: 'status-pending', label: 'Pendiente' };
-  return actual.some((candidate) => sameTextTeam(candidate, team))
-    ? { className: 'status-hit', label: 'Acertado' }
-    : { className: 'status-miss', label: 'Fallado' };
 }
 
 function scoreSign(home, away) {
