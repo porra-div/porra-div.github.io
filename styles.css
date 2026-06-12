@@ -246,6 +246,58 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 .modal-header h2 { margin: 0; color: #fff1c6; }
 .modal-header p { margin: 5px 0 0; color: var(--muted); }
 
+.game-panel {
+  width: min(920px, 100%);
+  background:
+    linear-gradient(180deg, rgba(255, 204, 41, .12), transparent 200px),
+    #26000a;
+}
+
+.game-shell {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 204, 41, .35);
+  border-radius: 8px;
+  background: #064f27;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 20px 46px rgba(0,0,0,.28);
+}
+
+#penaltyGame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1.56;
+  max-height: 72vh;
+  touch-action: none;
+  cursor: crosshair;
+}
+
+.game-result {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  min-width: 116px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 204, 41, .44);
+  background: rgba(50, 0, 12, .72);
+  color: #fff1c6;
+  font-size: 18px;
+  font-weight: 950;
+  text-align: center;
+  box-shadow: 0 10px 22px rgba(0,0,0,.22);
+}
+
+.game-result.goal {
+  color: #320008;
+  background: linear-gradient(135deg, var(--yellow), #f6a700);
+}
+
+.game-result.miss {
+  color: #ffe1d8;
+  background: rgba(198, 16, 46, .78);
+  border-color: rgba(255, 116, 116, .56);
+}
+
 .prediction-player-list {
   display: flex;
   flex-wrap: wrap;
@@ -352,6 +404,12 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 .prediction-match-title {
   font-weight: 950;
   line-height: 1.2;
+}
+
+.prediction-match-date {
+  color: var(--yellow-soft);
+  font-size: 12px;
+  font-weight: 850;
 }
 
 .prediction-score-row > div {
@@ -464,6 +522,14 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 .bracket-teams {
   font-weight: 900;
   font-size: 12px;
+  line-height: 1.25;
+}
+
+.bracket-date {
+  margin-top: 5px;
+  color: var(--yellow-soft);
+  font-size: 11px;
+  font-weight: 850;
   line-height: 1.25;
 }
 

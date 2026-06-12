@@ -115,8 +115,8 @@ function normalizeGames(raw) {
     const na = asNumber(readPath(a, ['matchNumber', 'match_number', 'number', 'gameNumber', 'game_number', 'id']));
     const nb = asNumber(readPath(b, ['matchNumber', 'match_number', 'number', 'gameNumber', 'game_number', 'id']));
     if (na !== null && nb !== null) return na - nb;
-    const da = Date.parse(readPath(a, ['date', 'datetime', 'startTime', 'start_time', 'kickoff']) || '');
-    const db = Date.parse(readPath(b, ['date', 'datetime', 'startTime', 'start_time', 'kickoff']) || '');
+    const da = Date.parse(readPath(a, ['local_date', 'localDate', 'date', 'datetime', 'startTime', 'start_time', 'kickoff', 'utcDate']) || '');
+    const db = Date.parse(readPath(b, ['local_date', 'localDate', 'date', 'datetime', 'startTime', 'start_time', 'kickoff', 'utcDate']) || '');
     if (Number.isFinite(da) && Number.isFinite(db)) return da - db;
     return 0;
   });
@@ -141,7 +141,7 @@ function normalizeGames(raw) {
       winnerTeam: normalizeTeamObject(readPath(game, ['winner.name', 'winner', 'winnerTeam.name', 'winner_team.name', 'winnerTeam', 'winner_team'])),
       loserTeam: normalizeTeamObject(readPath(game, ['loser.name', 'loser', 'loserTeam.name', 'loser_team.name', 'loserTeam', 'loser_team'])),
       venue: toText(readPath(game, ['venue.name', 'stadium.name', 'stadium', 'venue', 'location']) || ''),
-      kickoff: toText(readPath(game, ['date', 'datetime', 'startTime', 'start_time', 'kickoff', 'utcDate']) || ''),
+      kickoff: toText(readPath(game, ['local_date', 'localDate', 'date', 'datetime', 'startTime', 'start_time', 'kickoff', 'utcDate']) || ''),
       title: toText(readPath(game, ['name', 'title']) || '')
     };
   });

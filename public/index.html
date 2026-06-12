@@ -13,6 +13,7 @@
         <h1>Mundial 2026</h1>
       </div>
       <div class="hero-actions">
+        <button id="openGameBtn" type="button">Tirar penalti</button>
         <button id="refreshBtn">Actualizar ahora</button>
         <span id="statusBadge" class="badge">Cargando…</span>
       </div>
@@ -105,6 +106,22 @@
         <button id="closePredictionsBtn" class="icon-button" type="button">Cerrar</button>
       </div>
       <div id="predictionsContent"></div>
+    </div>
+  </div>
+
+  <div id="gameModal" class="modal" aria-hidden="true">
+    <div class="modal-panel game-panel" role="dialog" aria-modal="true" aria-labelledby="gameTitle">
+      <div class="modal-header">
+        <div>
+          <h2 id="gameTitle">Tirar penalti</h2>
+          <p id="gameSubtitle">Goles: 0 · Tiros: 0 · Racha: 0</p>
+        </div>
+        <button id="closeGameBtn" class="icon-button" type="button">Cerrar</button>
+      </div>
+      <div class="game-shell">
+        <canvas id="penaltyGame" width="960" height="620" aria-label="Minijuego de penaltis"></canvas>
+        <div id="gameResult" class="game-result">A puerta</div>
+      </div>
     </div>
   </div>
 

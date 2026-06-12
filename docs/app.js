@@ -3,14 +3,44 @@ let selectedParticipantId = null;
 let selectedPredictionParticipantId = null;
 let selectedGroup = '';
 let filter = '';
+const game = {
+  open: false,
+  dragging: false,
+  flying: false,
+  goals: 0,
+  shots: 0,
+  streak: 0,
+  message: 'A puerta',
+  keeperT: 0,
+  ball: { x: 480, y: 540, r: 16, vx: 0, vy: 0 },
+  aim: { x: 480, y: 120 },
+  raf: null
+};
 
 const $ = (selector) => document.querySelector(selector);
-const fmtDate = (value) => value ? new Date(value).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '—';
 const esc = (value) => String(value ?? '').replace(/[&<>'"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[c]));
 const STATIC_DATA_URL = 'static-data.json';
 const WORLD_CUP_API_BASE = 'https://worldcup26.ir';
 let staticData = null;
 let staticMode = false;
+
+function parseDateValue(value) {
+  if (!value) return null;
+  if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+  const raw = String(value).trim();
+  const apiDate = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?/);
+  if (apiDate) {
+    const [, month, day, year, hour = '0', minute = '0'] = apiDate;
+    return new Date(Number(year), Number(month) - 1, Number(day), Number(hour), Number(minute));
+  }
+  const parsed = new Date(raw);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
+}
+
+const fmtDate = (value) => {
+  const parsed = parseDateValue(value);
+  return parsed ? parsed.toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+};
 
 async function loadDashboard() {
   try {
@@ -215,11 +245,16 @@ function renderMatches() {
       <div>
         <div class="match-title">${esc(m.homeTeam || 'TBD')} - ${esc(m.awayTeam || 'TBD')}</div>
         <div class="match-meta">#${esc(m.matchNumber)} · ${esc(stageName(m.stage))}${m.group ? ` · Grupo ${esc(m.group)}` : ''}${m.venue ? ` · ${esc(m.venue)}` : ''}</div>
-        <div class="match-meta">${m.finished ? 'Finalizado' : (m.kickoff ? fmtDate(m.kickoff) : esc(m.status || 'Pendiente'))}</div>
+        <div class="match-meta">${esc(matchDateLabel(m))}${m.finished ? ' · Finalizado' : ''}</div>
       </div>
       <div class="score">${m.homeScore ?? '–'}-${m.awayScore ?? '–'}</div>
     </div>
   `).join('') : `<div class="empty">La API aún no ha devuelto partidos normalizables.</div>`;
+}
+
+function matchDateLabel(match) {
+  if (match?.kickoff) return fmtDate(match.kickoff);
+  return match?.status || 'Fecha por confirmar';
 }
 
 function stageName(stage) {
@@ -380,6 +415,7 @@ function predictionMatchCard(match) {
         <span class="status-pill">${esc(status.label)}</span>
       </div>
       <div class="prediction-match-title">${esc(match.label || `${match.homeLabel || ''}-${match.awayLabel || ''}`)}</div>
+      <div class="prediction-match-date">${esc(predictionDateText(match))}</div>
       <div class="prediction-score-row">
         <div>
           <span>Predicción</span>
@@ -415,6 +451,7 @@ function predictionBracket(person) {
             return `
               <div class="bracket-match ${status.className}">
                 <div class="bracket-teams">${esc(bracketLabel(m))}</div>
+                <div class="bracket-date">${esc(predictionDateText(m))}</div>
                 <div class="bracket-score">${esc(formatPredictionScoreOnly(m))}</div>
                 <div class="bracket-state">${esc(status.label)}</div>
               </div>
@@ -447,8 +484,17 @@ function bracketLabel(match) {
   return `${match.homeLabel || 'TBD'}-${match.awayLabel || 'TBD'}`;
 }
 
+function actualMatchForPrediction(prediction) {
+  return (state.dashboard?.actual?.matches || []).find((m) => Number(m.matchNumber) === Number(prediction.matchNumber));
+}
+
+function predictionDateText(prediction) {
+  const actual = actualMatchForPrediction(prediction);
+  return actual?.kickoff ? fmtDate(actual.kickoff) : 'Fecha por confirmar';
+}
+
 function matchPredictionStatus(prediction) {
-  const actual = (state.dashboard?.actual?.matches || []).find((m) => Number(m.matchNumber) === Number(prediction.matchNumber));
+  const actual = actualMatchForPrediction(prediction);
   if (!prediction?.valid || !actual?.finished) {
     return { className: 'status-pending', label: 'Pendiente', actualText: actual ? `${actual.homeScore ?? '-'}-${actual.awayScore ?? '-'}` : '' };
   }
@@ -519,7 +565,333 @@ function render() {
   renderGroups();
 }
 
+function openGame() {
+  game.open = true;
+  resetPenaltyBall();
+  updateGameHud();
+  $('#gameModal').classList.add('open');
+  $('#gameModal').setAttribute('aria-hidden', 'false');
+  resizePenaltyCanvas();
+  startGameLoop();
+}
+
+function closeGame() {
+  game.open = false;
+  $('#gameModal').classList.remove('open');
+  $('#gameModal').setAttribute('aria-hidden', 'true');
+  if (game.raf) cancelAnimationFrame(game.raf);
+  game.raf = null;
+}
+
+function resetPenaltyBall() {
+  const { width, height } = penaltyCanvasSize();
+  game.flying = false;
+  game.dragging = false;
+  game.ball = { x: width / 2, y: height - 72, r: 16, vx: 0, vy: 0 };
+  game.aim = { x: width / 2, y: Math.max(82, height * 0.2) };
+}
+
+function penaltyCanvasSize() {
+  const canvas = $('#penaltyGame');
+  return { width: canvas?.width || 960, height: canvas?.height || 620 };
+}
+
+function resizePenaltyCanvas() {
+  const canvas = $('#penaltyGame');
+  if (!canvas) return;
+  const rect = canvas.getBoundingClientRect();
+  const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+  const width = Math.max(360, Math.round(rect.width * dpr));
+  const height = Math.round(width * 0.64);
+  const old = penaltyCanvasSize();
+  if (canvas.width !== width || canvas.height !== height) {
+    const xRatio = width / old.width;
+    const yRatio = height / old.height;
+    canvas.width = width;
+    canvas.height = height;
+    game.ball.x *= xRatio;
+    game.ball.y *= yRatio;
+    game.ball.r = Math.max(12, width * 0.017);
+    game.aim.x *= xRatio;
+    game.aim.y *= yRatio;
+  }
+}
+
+function startGameLoop() {
+  if (game.raf) cancelAnimationFrame(game.raf);
+  const tick = () => {
+    if (!game.open) return;
+    updatePenaltyGame();
+    drawPenaltyGame();
+    game.raf = requestAnimationFrame(tick);
+  };
+  tick();
+}
+
+function updatePenaltyGame() {
+  const { width, height } = penaltyCanvasSize();
+  const goal = goalRect(width, height);
+  const keeper = keeperRect(width, height);
+  game.keeperT += 0.028;
+
+  if (!game.flying) return;
+
+  game.ball.x += game.ball.vx;
+  game.ball.y += game.ball.vy;
+  game.ball.vx *= 0.992;
+  game.ball.vy *= 0.992;
+
+  if (circleRect(game.ball, keeper)) {
+    finishPenalty('Parada', false);
+    return;
+  }
+
+  if (game.ball.y - game.ball.r <= goal.y + goal.h) {
+    if (game.ball.x > goal.x && game.ball.x < goal.x + goal.w && game.ball.y > goal.y - 16) {
+      finishPenalty('Golazo', true);
+    } else {
+      finishPenalty('Fuera', false);
+    }
+  }
+}
+
+function finishPenalty(message, goal) {
+  game.flying = false;
+  game.shots += 1;
+  if (goal) {
+    game.goals += 1;
+    game.streak += 1;
+  } else {
+    game.streak = 0;
+  }
+  game.message = message;
+  updateGameHud();
+  setTimeout(() => {
+    if (!game.open) return;
+    game.message = 'A puerta';
+    resetPenaltyBall();
+    updateGameHud();
+  }, 900);
+}
+
+function updateGameHud() {
+  $('#gameSubtitle').textContent = `Goles: ${game.goals} · Tiros: ${game.shots} · Racha: ${game.streak}`;
+  $('#gameResult').textContent = game.message;
+  $('#gameResult').className = `game-result ${game.message === 'Golazo' ? 'goal' : game.message === 'A puerta' ? '' : 'miss'}`;
+}
+
+function drawPenaltyGame() {
+  const canvas = $('#penaltyGame');
+  const ctx = canvas.getContext('2d');
+  const { width, height } = penaltyCanvasSize();
+  const goal = goalRect(width, height);
+  const keeper = keeperRect(width, height);
+
+  ctx.clearRect(0, 0, width, height);
+
+  const sky = ctx.createLinearGradient(0, 0, 0, height);
+  sky.addColorStop(0, '#7a001c');
+  sky.addColorStop(0.42, '#c8102e');
+  sky.addColorStop(0.43, '#0f7f3d');
+  sky.addColorStop(1, '#064f27');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, width, height);
+
+  drawCrowd(ctx, width, height);
+  drawPitch(ctx, width, height);
+  drawGoal(ctx, goal);
+  drawKeeper(ctx, keeper);
+  drawAim(ctx, width, height);
+  drawBall(ctx);
+}
+
+function drawCrowd(ctx, width, height) {
+  ctx.fillStyle = 'rgba(255, 204, 41, .82)';
+  const top = height * 0.08;
+  for (let i = 0; i < 58; i += 1) {
+    const x = (i / 57) * width;
+    const y = top + ((i * 17) % 34);
+    ctx.fillRect(x - 5, y, 10, 16);
+  }
+  ctx.fillStyle = 'rgba(255, 248, 219, .82)';
+  ctx.fillRect(width * 0.12, height * 0.03, width * 0.76, height * 0.022);
+}
+
+function drawPitch(ctx, width, height) {
+  ctx.strokeStyle = 'rgba(255,255,255,.62)';
+  ctx.lineWidth = Math.max(2, width * 0.004);
+  ctx.beginPath();
+  ctx.moveTo(width * 0.14, height * 0.48);
+  ctx.lineTo(width * 0.86, height * 0.48);
+  ctx.lineTo(width * 0.98, height);
+  ctx.lineTo(width * 0.02, height);
+  ctx.closePath();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.arc(width / 2, height * 0.78, width * 0.14, Math.PI, 0);
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255,255,255,.74)';
+  ctx.beginPath();
+  ctx.arc(width / 2, height - 72, 4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawGoal(ctx, goal) {
+  ctx.lineWidth = Math.max(5, goal.w * 0.018);
+  ctx.strokeStyle = '#fff7e8';
+  ctx.strokeRect(goal.x, goal.y, goal.w, goal.h);
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = 'rgba(255,255,255,.28)';
+  for (let x = goal.x + goal.w / 8; x < goal.x + goal.w; x += goal.w / 8) {
+    ctx.beginPath();
+    ctx.moveTo(x, goal.y);
+    ctx.lineTo(x, goal.y + goal.h);
+    ctx.stroke();
+  }
+  for (let y = goal.y + goal.h / 4; y < goal.y + goal.h; y += goal.h / 4) {
+    ctx.beginPath();
+    ctx.moveTo(goal.x, y);
+    ctx.lineTo(goal.x + goal.w, y);
+    ctx.stroke();
+  }
+}
+
+function drawKeeper(ctx, keeper) {
+  ctx.fillStyle = '#174ea6';
+  ctx.fillRect(keeper.x, keeper.y, keeper.w, keeper.h);
+  ctx.fillStyle = '#fff7e8';
+  ctx.beginPath();
+  ctx.arc(keeper.x + keeper.w / 2, keeper.y - keeper.h * 0.18, keeper.w * 0.22, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#174ea6';
+  ctx.lineWidth = Math.max(5, keeper.w * 0.08);
+  ctx.beginPath();
+  ctx.moveTo(keeper.x - keeper.w * 0.22, keeper.y + keeper.h * 0.18);
+  ctx.lineTo(keeper.x + keeper.w * 1.22, keeper.y + keeper.h * 0.18);
+  ctx.stroke();
+}
+
+function drawAim(ctx, width, height) {
+  if (game.flying) return;
+  ctx.strokeStyle = 'rgba(255, 204, 41, .82)';
+  ctx.lineWidth = Math.max(2, width * 0.003);
+  ctx.setLineDash([8, 8]);
+  ctx.beginPath();
+  ctx.moveTo(game.ball.x, game.ball.y);
+  ctx.lineTo(game.aim.x, game.aim.y);
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath();
+  ctx.arc(game.aim.x, game.aim.y, Math.max(12, width * 0.018), 0, Math.PI * 2);
+  ctx.stroke();
+  ctx.fillStyle = 'rgba(255, 204, 41, .20)';
+  ctx.fill();
+}
+
+function drawBall(ctx) {
+  const { x, y, r } = game.ball;
+  ctx.fillStyle = '#fff7e8';
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#320008';
+  ctx.lineWidth = Math.max(2, r * 0.14);
+  ctx.stroke();
+  ctx.fillStyle = '#320008';
+  for (let i = 0; i < 5; i += 1) {
+    const angle = i * Math.PI * 0.4;
+    ctx.beginPath();
+    ctx.arc(x + Math.cos(angle) * r * 0.44, y + Math.sin(angle) * r * 0.44, r * 0.12, 0, Math.PI * 2);
+    ctx.fill();
+  }
+}
+
+function goalRect(width, height) {
+  return { x: width * 0.2, y: height * 0.1, w: width * 0.6, h: height * 0.22 };
+}
+
+function keeperRect(width, height) {
+  const goal = goalRect(width, height);
+  const w = width * 0.075;
+  const h = height * 0.105;
+  const travel = goal.w - w - width * 0.08;
+  const x = goal.x + width * 0.04 + ((Math.sin(game.keeperT) + 1) / 2) * travel;
+  return { x, y: goal.y + goal.h * 0.52, w, h };
+}
+
+function circleRect(circle, rect) {
+  const x = Math.max(rect.x, Math.min(circle.x, rect.x + rect.w));
+  const y = Math.max(rect.y, Math.min(circle.y, rect.y + rect.h));
+  return Math.hypot(circle.x - x, circle.y - y) <= circle.r;
+}
+
+function pointerToCanvas(ev) {
+  const canvas = $('#penaltyGame');
+  const rect = canvas.getBoundingClientRect();
+  const scaleX = canvas.width / rect.width;
+  const scaleY = canvas.height / rect.height;
+  return {
+    x: (ev.clientX - rect.left) * scaleX,
+    y: (ev.clientY - rect.top) * scaleY
+  };
+}
+
+function clampAim(point) {
+  const { width, height } = penaltyCanvasSize();
+  return {
+    x: Math.max(width * 0.08, Math.min(width * 0.92, point.x)),
+    y: Math.max(height * 0.06, Math.min(height * 0.55, point.y))
+  };
+}
+
+function setPenaltyAim(ev) {
+  game.aim = clampAim(pointerToCanvas(ev));
+}
+
+function shootPenalty() {
+  if (game.flying) return;
+  const dx = game.aim.x - game.ball.x;
+  const dy = game.aim.y - game.ball.y;
+  game.ball.vx = dx / 38;
+  game.ball.vy = dy / 38;
+  game.flying = true;
+  game.dragging = false;
+  game.message = 'A puerta';
+  updateGameHud();
+}
+
 $('#refreshBtn').addEventListener('click', forceRefresh);
+$('#openGameBtn').addEventListener('click', openGame);
+$('#closeGameBtn').addEventListener('click', closeGame);
+$('#gameModal').addEventListener('click', (ev) => {
+  if (ev.target.id === 'gameModal') closeGame();
+});
+$('#penaltyGame').addEventListener('pointerdown', (ev) => {
+  ev.preventDefault();
+  if (game.flying) return;
+  game.dragging = true;
+  $('#penaltyGame').setPointerCapture(ev.pointerId);
+  setPenaltyAim(ev);
+});
+$('#penaltyGame').addEventListener('pointermove', (ev) => {
+  if (!game.dragging || game.flying) return;
+  ev.preventDefault();
+  setPenaltyAim(ev);
+});
+$('#penaltyGame').addEventListener('pointerup', (ev) => {
+  if (!game.dragging || game.flying) return;
+  ev.preventDefault();
+  setPenaltyAim(ev);
+  shootPenalty();
+});
+$('#penaltyGame').addEventListener('pointercancel', () => {
+  game.dragging = false;
+});
+window.addEventListener('resize', () => {
+  if (!game.open) return;
+  resizePenaltyCanvas();
+  drawPenaltyGame();
+});
 $('#searchInput').addEventListener('input', (ev) => {
   filter = ev.target.value;
   renderLeaderboard();
