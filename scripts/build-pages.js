@@ -89,10 +89,18 @@ function copyStaticSiteToDocs() {
   console.log('Static site copied to docs/ for branch-based GitHub Pages.');
 }
 
+function copyStaticSiteToRoot() {
+  for (const file of STATIC_FILES) {
+    fs.copyFileSync(path.join(PUBLIC_DIR, file), path.join(ROOT, file));
+  }
+  console.log('Static site copied to repo root for user GitHub Pages.');
+}
+
 async function main() {
   buildBrowserEngine();
   await buildStaticData();
   copyStaticSiteToDocs();
+  copyStaticSiteToRoot();
 }
 
 main().catch((err) => {
