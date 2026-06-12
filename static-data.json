@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-12T09:54:17.793Z",
+  "generatedAt": "2026-06-12T09:56:43.825Z",
   "participants": [
     {
       "id": "excel-mundial-2026-adri-xlsx",
@@ -2421,11 +2421,11 @@
             "label": "México-Sudáfrica",
             "homeLabel": "México",
             "awayLabel": "Sudáfrica",
-            "raw": "1|2-0",
+            "raw": "X|0-0",
             "prefix": "",
-            "scoreText": "1|2-0",
-            "sign": "1",
-            "homeGoals": 2,
+            "scoreText": "X|0-0",
+            "sign": "X",
+            "homeGoals": 0,
             "awayGoals": 0,
             "valid": true
           },
@@ -2436,11 +2436,11 @@
             "label": "Corea del Sur-República Checa",
             "homeLabel": "Corea del Sur",
             "awayLabel": "República Checa",
-            "raw": "1|1-0",
+            "raw": "X|0-0",
             "prefix": "",
-            "scoreText": "1|1-0",
-            "sign": "1",
-            "homeGoals": 1,
+            "scoreText": "X|0-0",
+            "sign": "X",
+            "homeGoals": 0,
             "awayGoals": 0,
             "valid": true
           },
@@ -15985,7 +15985,7 @@
       "Iran",
       "Croatia"
     ],
-    "fetchedAt": "2026-06-12T09:54:17.789Z",
+    "fetchedAt": "2026-06-12T09:56:43.821Z",
     "source": "https://worldcup26.ir"
   }
 }
