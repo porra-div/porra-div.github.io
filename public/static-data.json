@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-12T18:44:37.785Z",
+  "generatedAt": "2026-06-12T18:52:21.114Z",
   "participants": [
     {
       "id": "excel-mundial-2026-adri-xlsx",
@@ -2436,11 +2436,11 @@
             "label": "Corea del Sur-República Checa",
             "homeLabel": "Corea del Sur",
             "awayLabel": "República Checa",
-            "raw": "X|0-0",
+            "raw": "1|1-0",
             "prefix": "",
-            "scoreText": "X|0-0",
-            "sign": "X",
-            "homeGoals": 0,
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
             "awayGoals": 0,
             "valid": true
           },
@@ -3498,11 +3498,11 @@
             "row": 164,
             "stage": "round32",
             "matchNumber": 73,
-            "label": "Corea del Sur-Canadá",
-            "homeLabel": "Corea del Sur",
+            "label": "México-Canadá",
+            "homeLabel": "México",
             "awayLabel": "Canadá",
-            "raw": "Corea del Sur-Canadá·1|2-1",
-            "prefix": "Corea del Sur-Canadá",
+            "raw": "México-Canadá·1|2-1",
+            "prefix": "México-Canadá",
             "scoreText": "1|2-1",
             "sign": "1",
             "homeGoals": 2,
@@ -3588,11 +3588,11 @@
             "row": 170,
             "stage": "round32",
             "matchNumber": 79,
-            "label": "México-Cabo Verde",
-            "homeLabel": "México",
+            "label": "Corea del Sur-Cabo Verde",
+            "homeLabel": "Corea del Sur",
             "awayLabel": "Cabo Verde",
-            "raw": "México-Cabo Verde·1|2-0",
-            "prefix": "México-Cabo Verde",
+            "raw": "Corea del Sur-Cabo Verde·1|2-0",
+            "prefix": "Corea del Sur-Cabo Verde",
             "scoreText": "1|2-0",
             "sign": "1",
             "homeGoals": 2,
@@ -3738,11 +3738,11 @@
             "row": 200,
             "stage": "round16",
             "matchNumber": 89,
-            "label": "Corea del Sur-Marruecos",
-            "homeLabel": "Corea del Sur",
+            "label": "México-Marruecos",
+            "homeLabel": "México",
             "awayLabel": "Marruecos",
-            "raw": "Corea del Sur-Marruecos·2|1-2",
-            "prefix": "Corea del Sur-Marruecos",
+            "raw": "México-Marruecos·2|1-2",
+            "prefix": "México-Marruecos",
             "scoreText": "2|1-2",
             "sign": "2",
             "homeGoals": 1,
@@ -3783,11 +3783,11 @@
             "row": 203,
             "stage": "round16",
             "matchNumber": 92,
-            "label": "México-Inglaterra",
-            "homeLabel": "México",
+            "label": "Corea del Sur-Inglaterra",
+            "homeLabel": "Corea del Sur",
             "awayLabel": "Inglaterra",
-            "raw": "México-Inglaterra·2|2-3",
-            "prefix": "México-Inglaterra",
+            "raw": "Corea del Sur-Inglaterra·2|2-3",
+            "prefix": "Corea del Sur-Inglaterra",
             "scoreText": "2|2-3",
             "sign": "2",
             "homeGoals": 2,
@@ -3981,16 +3981,16 @@
             "group": "A",
             "position": 1,
             "label": "1º GRUPO A",
-            "value": "México",
-            "team": "Mexico"
+            "value": "Corea del Sur",
+            "team": "South Korea"
           },
           {
             "row": 81,
             "group": "A",
             "position": 2,
             "label": "2º GRUPO A",
-            "value": "Corea del Sur",
-            "team": "South Korea"
+            "value": "México",
+            "team": "Mexico"
           },
           {
             "row": 82,
@@ -4365,8 +4365,8 @@
           "round32": [
             {
               "row": 130,
-              "value": "Corea del Sur",
-              "team": "South Korea",
+              "value": "México",
+              "team": "Mexico",
               "label": "Dieciseisavofinalista"
             },
             {
@@ -4401,8 +4401,8 @@
             },
             {
               "row": 136,
-              "value": "México",
-              "team": "Mexico",
+              "value": "Corea del Sur",
+              "team": "South Korea",
               "label": "Dieciseisavofinalista"
             },
             {
@@ -4559,8 +4559,8 @@
           "round16": [
             {
               "row": 182,
-              "value": "Corea del Sur",
-              "team": "South Korea",
+              "value": "México",
+              "team": "Mexico",
               "label": "Octavofinalista"
             },
             {
@@ -4577,8 +4577,8 @@
             },
             {
               "row": 185,
-              "value": "México",
-              "team": "Mexico",
+              "value": "Corea del Sur",
+              "team": "South Korea",
               "label": "Octavofinalista"
             },
             {
@@ -15985,8 +15985,7 @@
       "Iran",
       "Croatia"
     ],
-    "fetchedAt": "2026-06-12T09:56:43.821Z",
-    "source": "https://worldcup26.ir (cache)",
-    "apiWarning": "No se pudo refrescar la API: fetch failed. Usando caché."
+    "fetchedAt": "2026-06-12T18:52:21.109Z",
+    "source": "https://worldcup26.ir"
   }
 }

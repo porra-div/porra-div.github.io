@@ -12,6 +12,9 @@ const game = {
   streak: 0,
   message: 'A puerta',
   keeperT: 0,
+  spin: 0,
+  targetT: 0,
+  blockerT: 0,
   ball: { x: 480, y: 540, r: 16, vx: 0, vy: 0 },
   aim: { x: 480, y: 120 },
   raf: null
@@ -587,7 +590,8 @@ function resetPenaltyBall() {
   const { width, height } = penaltyCanvasSize();
   game.flying = false;
   game.dragging = false;
-  game.ball = { x: width / 2, y: height - 72, r: 16, vx: 0, vy: 0 };
+  game.spin = 0;
+  game.ball = { x: width / 2, y: height - 72, r: Math.max(11, width * 0.015), vx: 0, vy: 0 };
   game.aim = { x: width / 2, y: Math.max(82, height * 0.2) };
 }
 
@@ -632,14 +636,25 @@ function updatePenaltyGame() {
   const { width, height } = penaltyCanvasSize();
   const goal = goalRect(width, height);
   const keeper = keeperRect(width, height);
-  game.keeperT += 0.028;
+  const target = targetRect(width, height);
+  game.keeperT += 0.062 + Math.min(game.streak, 6) * 0.006;
+  game.targetT += 0.045;
+  game.blockerT += 0.055;
 
   if (!game.flying) return;
 
+  game.ball.vx += game.spin;
   game.ball.x += game.ball.vx;
   game.ball.y += game.ball.vy;
-  game.ball.vx *= 0.992;
-  game.ball.vy *= 0.992;
+  game.ball.vx *= 0.988;
+  game.ball.vy *= 0.989;
+
+  for (const blocker of blockerRects(width, height)) {
+    if (circleRect(game.ball, blocker)) {
+      finishPenalty('Tapado', false);
+      return;
+    }
+  }
 
   if (circleRect(game.ball, keeper)) {
     finishPenalty('Parada', false);
@@ -647,8 +662,10 @@ function updatePenaltyGame() {
   }
 
   if (game.ball.y - game.ball.r <= goal.y + goal.h) {
-    if (game.ball.x > goal.x && game.ball.x < goal.x + goal.w && game.ball.y > goal.y - 16) {
+    if (circleRect(game.ball, target)) {
       finishPenalty('Golazo', true);
+    } else if (game.ball.x > goal.x && game.ball.x < goal.x + goal.w && game.ball.y > goal.y - 18) {
+      finishPenalty('Casi', false);
     } else {
       finishPenalty('Fuera', false);
     }
@@ -675,7 +692,7 @@ function finishPenalty(message, goal) {
 }
 
 function updateGameHud() {
-  $('#gameSubtitle').textContent = `Goles: ${game.goals} · Tiros: ${game.shots} · Racha: ${game.streak}`;
+  $('#gameSubtitle').textContent = `Modo difícil · Goles: ${game.goals} · Tiros: ${game.shots} · Racha: ${game.streak}`;
   $('#gameResult').textContent = game.message;
   $('#gameResult').className = `game-result ${game.message === 'Golazo' ? 'goal' : game.message === 'A puerta' ? '' : 'miss'}`;
 }
@@ -700,6 +717,8 @@ function drawPenaltyGame() {
   drawCrowd(ctx, width, height);
   drawPitch(ctx, width, height);
   drawGoal(ctx, goal);
+  drawTarget(ctx, targetRect(width, height));
+  blockerRects(width, height).forEach((blocker, index) => drawBlocker(ctx, blocker, index));
   drawKeeper(ctx, keeper);
   drawAim(ctx, width, height);
   drawBall(ctx);
@@ -771,6 +790,44 @@ function drawKeeper(ctx, keeper) {
   ctx.stroke();
 }
 
+function drawTarget(ctx, target) {
+  ctx.fillStyle = 'rgba(255, 204, 41, .26)';
+  ctx.strokeStyle = '#ffcc29';
+  ctx.lineWidth = Math.max(3, target.w * 0.035);
+  ctx.beginPath();
+  roundedRectPath(ctx, target.x, target.y, target.w, target.h, Math.max(6, target.w * 0.08));
+  ctx.fill();
+  ctx.stroke();
+}
+
+function roundedRectPath(ctx, x, y, w, h, r) {
+  const radius = Math.min(r, w / 2, h / 2);
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + w - radius, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+  ctx.lineTo(x + w, y + h - radius);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+  ctx.lineTo(x + radius, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+}
+
+function drawBlocker(ctx, blocker, index) {
+  ctx.fillStyle = index % 2 ? '#fff7e8' : '#c8102e';
+  ctx.fillRect(blocker.x, blocker.y, blocker.w, blocker.h);
+  ctx.fillStyle = '#320008';
+  ctx.beginPath();
+  ctx.arc(blocker.x + blocker.w / 2, blocker.y - blocker.w * 0.16, blocker.w * 0.24, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(50,0,8,.85)';
+  ctx.lineWidth = Math.max(4, blocker.w * 0.08);
+  ctx.beginPath();
+  ctx.moveTo(blocker.x - blocker.w * 0.18, blocker.y + blocker.h * 0.25);
+  ctx.lineTo(blocker.x + blocker.w * 1.18, blocker.y + blocker.h * 0.25);
+  ctx.stroke();
+}
+
 function drawAim(ctx, width, height) {
   if (game.flying) return;
   ctx.strokeStyle = 'rgba(255, 204, 41, .82)';
@@ -807,16 +864,47 @@ function drawBall(ctx) {
 }
 
 function goalRect(width, height) {
-  return { x: width * 0.2, y: height * 0.1, w: width * 0.6, h: height * 0.22 };
+  return { x: width * 0.25, y: height * 0.1, w: width * 0.5, h: height * 0.2 };
+}
+
+function targetRect(width, height) {
+  const goal = goalRect(width, height);
+  const w = goal.w * 0.24;
+  const h = goal.h * 0.42;
+  return {
+    x: goal.x + goal.w * 0.08 + ((Math.sin(game.targetT) + 1) / 2) * (goal.w * 0.84 - w),
+    y: goal.y + goal.h * 0.12 + ((Math.cos(game.targetT * 1.35) + 1) / 2) * (goal.h * 0.68 - h),
+    w,
+    h
+  };
 }
 
 function keeperRect(width, height) {
   const goal = goalRect(width, height);
-  const w = width * 0.075;
-  const h = height * 0.105;
+  const w = width * 0.13;
+  const h = height * 0.135;
   const travel = goal.w - w - width * 0.08;
-  const x = goal.x + width * 0.04 + ((Math.sin(game.keeperT) + 1) / 2) * travel;
-  return { x, y: goal.y + goal.h * 0.52, w, h };
+  const movingX = goal.x + width * 0.04 + ((Math.sin(game.keeperT) + 1) / 2) * travel;
+  const chaseX = game.flying ? game.ball.x - w / 2 : movingX;
+  const x = movingX * 0.66 + Math.max(goal.x, Math.min(goal.x + goal.w - w, chaseX)) * 0.34;
+  return { x, y: goal.y + goal.h * 0.48, w, h };
+}
+
+function blockerRects(width, height) {
+  const baseY = height * 0.48;
+  const w = width * 0.055;
+  const h = height * 0.12;
+  return [0, 1, 2].map((index) => {
+    const span = width * (0.24 + index * 0.03);
+    const center = width * (0.34 + index * 0.16);
+    const phase = game.blockerT * (1.1 + index * 0.18) + index * 1.7;
+    return {
+      x: center + Math.sin(phase) * span - w / 2,
+      y: baseY - index * height * 0.065 + Math.cos(phase * 1.4) * height * 0.018,
+      w,
+      h
+    };
+  });
 }
 
 function circleRect(circle, rect) {
@@ -852,8 +940,11 @@ function shootPenalty() {
   if (game.flying) return;
   const dx = game.aim.x - game.ball.x;
   const dy = game.aim.y - game.ball.y;
-  game.ball.vx = dx / 38;
-  game.ball.vy = dy / 38;
+  const distance = Math.hypot(dx, dy) || 1;
+  const powerPenalty = Math.min(1, Math.max(0, (distance - 180) / 420));
+  game.spin = ((Math.random() - 0.5) * 0.045) + ((game.aim.x - game.ball.x) / penaltyCanvasSize().width) * 0.018;
+  game.ball.vx = dx / (45 - powerPenalty * 6);
+  game.ball.vy = dy / (45 - powerPenalty * 6);
   game.flying = true;
   game.dragging = false;
   game.message = 'A puerta';
