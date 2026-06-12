@@ -25,6 +25,43 @@ Abre:
 http://localhost:3000
 ```
 
+## Publicarlo en GitHub Pages
+
+El repo incluye un workflow en `.github/workflows/pages.yml`. Al hacer push a `main` o `master`, GitHub Actions:
+
+1. Instala dependencias.
+2. Lee los Excel de `data/predictions/`.
+3. Genera `public/static-data.json` y `public/static-engine.js`.
+4. Publica la carpeta `public/` en GitHub Pages.
+
+En GitHub, ve a:
+
+```text
+Settings > Pages > Build and deployment > Source > GitHub Actions
+```
+
+Después haz push al repo. La URL quedará normalmente como:
+
+```text
+https://TU_USUARIO.github.io/NOMBRE_DEL_REPO/
+```
+
+En GitHub Pages no hay servidor Node ejecutándose. Los Excel se convierten a JSON durante el despliegue, y cuando alguien entra en la web el navegador consulta la API pública para recalcular la clasificación con los últimos resultados. Si la API falla, usa los datos guardados en `static-data.json`.
+
+Para actualizar participantes, añade o cambia Excel en `data/predictions/`, haz commit y push. Para probar el build estático en local:
+
+```bash
+npm run build:pages
+cd public
+python3 -m http.server 4173
+```
+
+Abre:
+
+```text
+http://localhost:4173
+```
+
 ## Dónde poner los Excel
 
 Mete todos los ficheros `.xlsx`, `.xlsm` o `.xls` de los participantes en:

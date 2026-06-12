@@ -1,0 +1,19 @@
+{
+  "name": "mundial-2026-porra-web",
+  "version": "1.0.0",
+  "description": "Web para una porra del Mundial 2026: lee excels de participantes, consulta API abierta y recalcula puntos cada 5 minutos.",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node server/index.js",
+    "build:pages": "node scripts/build-pages.js",
+    "check": "node --check server/index.js && node --check server/scoring.js && node --check server/excelImporter.js && node --check server/apiClient.js && node --check scripts/build-pages.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "xlsx": "^0.18.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

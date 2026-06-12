@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Porra Mundial 2026</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div>
+        <p class="eyebrow">🏆 Mundial 2026 · Porra Rodri</p>
+        <h1>Clasificación viva de la porra</h1>
+        <p class="subtitle">Resultados desde API abierta, Excels de participantes y recálculo automático cada 5 minutos.</p>
+      </div>
+      <div class="hero-actions">
+        <button id="refreshBtn">Actualizar ahora</button>
+        <span id="statusBadge" class="badge">Cargando…</span>
+      </div>
+    </header>
+
+    <section id="alerts" class="alerts"></section>
+
+    <section class="grid kpis" id="funFacts"></section>
+
+    <main class="layout">
+      <section class="card leaderboard-card">
+        <div class="card-header">
+          <div>
+            <h2>Clasificación</h2>
+            <p>Ordenada por puntos totales y marcadores exactos.</p>
+          </div>
+          <input id="searchInput" type="search" placeholder="Buscar participante…">
+        </div>
+        <div class="table-wrap">
+          <table id="leaderboardTable">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Participante</th>
+                <th>Total</th>
+                <th>Exactos</th>
+                <th>Grupos</th>
+                <th>1/16</th>
+                <th>1/8</th>
+                <th>1/4</th>
+                <th>Semis</th>
+                <th>Honor</th>
+                <th>Premios</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside class="card details-card">
+        <div class="card-header">
+          <div>
+            <h2>Detalle del líder</h2>
+            <p id="detailSubtitle">Aciertos destacados.</p>
+          </div>
+        </div>
+        <div id="participantDetails" class="details"></div>
+      </aside>
+    </main>
+
+    <section class="grid two-cols">
+      <article class="card">
+        <div class="card-header">
+          <div>
+            <h2>Próximos / últimos partidos</h2>
+            <p>Sirve para seguir qué puede mover la clasificación.</p>
+          </div>
+        </div>
+        <div id="matchesList" class="match-list"></div>
+      </article>
+
+      <article class="card">
+        <div class="card-header">
+          <div>
+            <h2>Cuadro y clasificados</h2>
+            <p>Se actualiza según se cierran rondas.</p>
+          </div>
+        </div>
+        <div id="qualifiedList" class="qualified-list"></div>
+      </article>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h2>Grupos</h2>
+          <p>Tabla actual de cada grupo cuando la API la proporciona o puede calcularse.</p>
+        </div>
+      </div>
+      <div id="groupsGrid" class="groups-grid"></div>
+    </section>
+  </div>
+
+  <script src="static-engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
