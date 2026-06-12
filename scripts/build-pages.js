@@ -6,9 +6,18 @@ const { safeReadJson } = require('../server/utils');
 
 const ROOT = path.resolve(__dirname, '..');
 const PUBLIC_DIR = path.join(ROOT, 'public');
+const DOCS_DIR = path.join(ROOT, 'docs');
 const PREDICTIONS_DIR = path.join(ROOT, 'data/predictions');
 const MANUAL_AWARDS_FILE = path.join(ROOT, 'data/manual/awards.json');
 const CACHE_FILE = path.join(ROOT, 'data/cache/current-api.json');
+const STATIC_FILES = [
+  '.nojekyll',
+  'app.js',
+  'index.html',
+  'static-data.json',
+  'static-engine.js',
+  'styles.css'
+];
 
 function readSource(relativePath) {
   return fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
@@ -72,9 +81,18 @@ async function buildStaticData() {
   console.log(`GitHub Pages data generated: ${participants.length} participante(s), ${errors.length} error(es)`);
 }
 
+function copyStaticSiteToDocs() {
+  fs.mkdirSync(DOCS_DIR, { recursive: true });
+  for (const file of STATIC_FILES) {
+    fs.copyFileSync(path.join(PUBLIC_DIR, file), path.join(DOCS_DIR, file));
+  }
+  console.log('Static site copied to docs/ for branch-based GitHub Pages.');
+}
+
 async function main() {
   buildBrowserEngine();
   await buildStaticData();
+  copyStaticSiteToDocs();
 }
 
 main().catch((err) => {

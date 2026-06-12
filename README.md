@@ -27,7 +27,37 @@ http://localhost:3000
 
 ## Publicarlo en GitHub Pages
 
-El repo incluye un workflow en `.github/workflows/pages.yml`. Al hacer push a `main` o `master`, GitHub Actions:
+Si en `Settings > Pages` no aparece `GitHub Actions`, usa la opción clásica:
+
+```text
+Settings > Pages > Build and deployment
+Source: Deploy from a branch
+Branch: main
+Folder: /docs
+Save
+```
+
+Después abre:
+
+```text
+https://TU_USUARIO.github.io/NOMBRE_DEL_REPO/
+```
+
+Si el repo se llama exactamente `TU_USUARIO.github.io`, la URL será:
+
+```text
+https://TU_USUARIO.github.io/
+```
+
+Para actualizar la web, ejecuta antes de hacer commit:
+
+```bash
+npm run build:pages
+```
+
+Ese comando lee los Excel de `data/predictions/`, genera los JSON estáticos y copia la web lista a `docs/`.
+
+El repo también incluye un workflow en `.github/workflows/pages.yml`. Si tu GitHub muestra la opción `GitHub Actions`, al hacer push a `main` o `master`:
 
 1. Instala dependencias.
 2. Lee los Excel de `data/predictions/`.
@@ -40,7 +70,7 @@ En GitHub, ve a:
 Settings > Pages > Build and deployment > Source > GitHub Actions
 ```
 
-Después haz push al repo. La URL quedará normalmente como:
+La URL quedará normalmente como:
 
 ```text
 https://TU_USUARIO.github.io/NOMBRE_DEL_REPO/
@@ -48,11 +78,11 @@ https://TU_USUARIO.github.io/NOMBRE_DEL_REPO/
 
 En GitHub Pages no hay servidor Node ejecutándose. Los Excel se convierten a JSON durante el despliegue, y cuando alguien entra en la web el navegador consulta la API pública para recalcular la clasificación con los últimos resultados. Si la API falla, usa los datos guardados en `static-data.json`.
 
-Para actualizar participantes, añade o cambia Excel en `data/predictions/`, haz commit y push. Para probar el build estático en local:
+Para actualizar participantes, añade o cambia Excel en `data/predictions/`, ejecuta `npm run build:pages`, haz commit y push. Para probar el build estático en local:
 
 ```bash
 npm run build:pages
-cd public
+cd docs
 python3 -m http.server 4173
 ```
 
