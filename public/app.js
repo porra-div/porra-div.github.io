@@ -1,6 +1,9 @@
 let state = null;
 let selectedParticipantId = null;
+let selectedPredictionParticipantId = null;
+let selectedGroup = '';
 let filter = '';
+let activeTab = 'dashboard';
 
 const $ = (selector) => document.querySelector(selector);
 const fmtDate = (value) => value ? new Date(value).toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '—';
@@ -16,6 +19,7 @@ async function loadDashboard() {
     const res = await fetch('/api/dashboard');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     state = await res.json();
+    await hydrateLocalParticipants();
   } catch (_) {
     staticMode = true;
     state = await loadStaticDashboard();
@@ -47,6 +51,18 @@ async function loadStaticData() {
   if (!res.ok) throw new Error(`No se pudo cargar ${STATIC_DATA_URL}: HTTP ${res.status}`);
   staticData = await res.json();
   return staticData;
+}
+
+async function hydrateLocalParticipants() {
+  if (state.participants?.length) return;
+  try {
+    const res = await fetch('/api/participants');
+    if (!res.ok) return;
+    const payload = await res.json();
+    state.participants = payload.participants || [];
+  } catch (_) {
+    state.participants = [];
+  }
 }
 
 async function fetchStaticApiData(fallback, forceApi = false) {
@@ -94,6 +110,7 @@ async function loadStaticDashboard(options = {}) {
       staticGeneratedAt: data.generatedAt
     },
     dashboard,
+    participants: data.participants || [],
     error: null
   };
 }
@@ -111,8 +128,7 @@ function renderAlerts() {
 
 function renderStatus() {
   const badge = $('#statusBadge');
-  const refreshMin = Math.round((state.config?.refreshMs || 300000) / 60000);
-  badge.textContent = state.loading ? 'Cargando…' : `Última actualización: ${fmtDate(state.updatedAt)} · cada ${refreshMin} min`;
+  badge.textContent = state.loading ? 'Cargando…' : `Actualizado: ${fmtDate(state.updatedAt)}`;
 }
 
 function renderFunFacts() {
@@ -149,8 +165,10 @@ function renderLeaderboard() {
   document.querySelectorAll('#leaderboardTable tbody tr[data-id]').forEach((row) => {
     row.addEventListener('click', () => {
       selectedParticipantId = row.dataset.id;
+      selectedPredictionParticipantId = row.dataset.id;
       renderLeaderboard();
       renderParticipantDetails();
+      renderPredictions();
     });
   });
 }
@@ -162,7 +180,7 @@ function renderParticipantDetails() {
     $('#participantDetails').innerHTML = `<div class="empty">Sin participante seleccionado.</div>`;
     return;
   }
-  $('#detailSubtitle').textContent = `${person.name}: ${person.total} puntos, ${person.exactScores} marcadores exactos.`;
+  $('#detailSubtitle').textContent = `${person.name} · ${person.total} puntos · ${person.exactScores} exactos`;
   const events = person.events || [];
   $('#participantDetails').innerHTML = events.length ? events.map((e) => `
     <div class="detail-event">
@@ -178,12 +196,12 @@ function renderMatches() {
   const visible = matches
     .filter((m) => m.homeTeam || m.awayTeam)
     .sort((a, b) => {
-      if (a.finished !== b.finished) return a.finished ? 1 : -1;
+      if (a.finished !== b.finished) return a.finished ? -1 : 1;
       return (a.matchNumber || 0) - (b.matchNumber || 0);
     })
-    .slice(0, 12);
+    .slice(0, 16);
   $('#matchesList').innerHTML = visible.length ? visible.map((m) => `
-    <div class="match">
+    <div class="match ${m.finished ? 'finished' : ''}">
       <div>
         <div class="match-title">${esc(m.homeTeam || 'TBD')} - ${esc(m.awayTeam || 'TBD')}</div>
         <div class="match-meta">#${esc(m.matchNumber)} · ${esc(stageName(m.stage))}${m.group ? ` · Grupo ${esc(m.group)}` : ''}${m.venue ? ` · ${esc(m.venue)}` : ''}</div>
@@ -223,21 +241,210 @@ function teamTags(teams) {
 
 function renderGroups() {
   const groups = state.dashboard?.actual?.groups || {};
-  const letters = Object.keys(groups).sort();
-  $('#groupsGrid').innerHTML = letters.length ? letters.map((letter) => `
-    <article class="group-card">
-      <h3>Grupo ${esc(letter)}</h3>
+  const matches = state.dashboard?.actual?.matches || [];
+  const letters = groupLetters(groups, matches);
+  const select = $('#groupSelect');
+
+  if (!letters.length) {
+    select.innerHTML = '';
+    $('#groupsGrid').innerHTML = `<div class="empty">Sin grupos todavía.</div>`;
+    return;
+  }
+
+  if (!selectedGroup || !letters.includes(selectedGroup)) selectedGroup = letters[0];
+  select.innerHTML = letters.map((letter) => `<option value="${esc(letter)}" ${letter === selectedGroup ? 'selected' : ''}>Grupo ${esc(letter)}</option>`).join('');
+
+  const rows = groupRows(selectedGroup, groups, matches);
+  const groupMatches = matches
+    .filter((m) => m.stage === 'group' && m.group === selectedGroup && (m.homeTeam || m.awayTeam))
+    .sort((a, b) => (a.matchNumber || 0) - (b.matchNumber || 0));
+
+  $('#groupsGrid').innerHTML = `
+    <article class="group-card featured">
+      <h3>Grupo ${esc(selectedGroup)}</h3>
       <div class="group-row muted"><span>#</span><span>Equipo</span><span>Pts</span><span>DG</span></div>
-      ${(groups[letter] || []).map((t, i) => `
+      ${rows.map((t, i) => `
         <div class="group-row">
-          <span>${i + 1}</span><span>${esc(t.team)}</span><span>${t.points ?? 0}</span><span>${t.goalDifference ?? 0}</span>
+          <span>${t.position || i + 1}</span><span>${esc(t.team)}</span><span>${t.points ?? 0}</span><span>${t.goalDifference ?? 0}</span>
         </div>
       `).join('')}
     </article>
-  `).join('') : `<div class="empty">Sin grupos todavía. Se llenarán cuando la API devuelva clasificación o se puedan calcular por resultados.</div>`;
+    <article class="group-card featured">
+      <h3>Partidos del grupo</h3>
+      <div class="mini-matches">
+        ${groupMatches.map((m) => `
+          <div class="mini-match ${m.finished ? 'finished' : ''}">
+            <span>${esc(m.homeTeam || 'TBD')} - ${esc(m.awayTeam || 'TBD')}</span>
+            <strong>${m.homeScore ?? '–'}-${m.awayScore ?? '–'}</strong>
+          </div>
+        `).join('') || `<div class="muted">Pendiente</div>`}
+      </div>
+    </article>
+  `;
+}
+
+function renderTabs() {
+  document.querySelectorAll('.tab-button').forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.tab === activeTab);
+  });
+  document.querySelectorAll('.tab-view').forEach((view) => {
+    view.classList.toggle('active', view.id === `${activeTab}View`);
+  });
+}
+
+function renderPredictions() {
+  const participants = state.participants || [];
+  const select = $('#predictionParticipantSelect');
+  const content = $('#predictionsContent');
+  if (!participants.length) {
+    select.innerHTML = '';
+    content.innerHTML = `<div class="empty">No hay predicciones cargadas.</div>`;
+    return;
+  }
+
+  if (!selectedPredictionParticipantId || !participants.some((p) => p.id === selectedPredictionParticipantId)) {
+    selectedPredictionParticipantId = selectedParticipantId || participants[0].id;
+  }
+  const person = participants.find((p) => p.id === selectedPredictionParticipantId) || participants[0];
+  select.innerHTML = participants
+    .map((p) => `<option value="${esc(p.id)}" ${p.id === person.id ? 'selected' : ''}>${esc(p.name)}</option>`)
+    .join('');
+
+  content.innerHTML = `
+    <div class="prediction-grid">
+      ${predictionMatchesTable(person)}
+      ${predictionGroupTable(person)}
+      ${predictionQualifiersTable(person)}
+      ${predictionHonorTable(person)}
+    </div>
+  `;
+}
+
+function predictionMatchesTable(person) {
+  const rows = Object.values(person.predictions?.matches || {}).sort((a, b) => a.matchNumber - b.matchNumber);
+  return predictionSection('Partidos', `
+    <div class="excel-wrap">
+      <table class="excel-table predictions-matches">
+        <thead><tr><th>#</th><th>Fase</th><th>Partido</th><th>Pronóstico</th></tr></thead>
+        <tbody>
+          ${rows.map((m) => `
+            <tr>
+              <td>${m.matchNumber}</td>
+              <td>${esc(stageName(m.stage))}</td>
+              <td>${esc(m.label || `${m.homeLabel || ''}-${m.awayLabel || ''}`)}</td>
+              <td><strong>${esc(formatPredictionScore(m))}</strong></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `);
+}
+
+function predictionGroupTable(person) {
+  const rows = person.predictions?.groupPositions || [];
+  return predictionSection('Grupos', `
+    <div class="excel-wrap">
+      <table class="excel-table">
+        <thead><tr><th>Grupo</th><th>Posición</th><th>Equipo</th></tr></thead>
+        <tbody>
+          ${rows.map((r) => `
+            <tr><td>${esc(r.group)}</td><td>${r.position}</td><td><strong>${esc(r.value || r.team)}</strong></td></tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+  `);
+}
+
+function predictionQualifiersTable(person) {
+  const labels = {
+    round32: 'Dieciseisavos',
+    round16: 'Octavos',
+    quarter: 'Cuartos',
+    semi: 'Semifinales',
+    thirdPlaceGame: '3º y 4º puesto',
+    final: 'Final'
+  };
+  const qualifiers = person.predictions?.qualifiers || {};
+  const rows = Object.entries(labels).flatMap(([key, label]) =>
+    (qualifiers[key] || []).filter((item) => item.value || item.team).map((item) => ({ label, team: item.value || item.team }))
+  );
+  return predictionSection('Clasificados', `
+    <div class="excel-wrap">
+      <table class="excel-table">
+        <thead><tr><th>Ronda</th><th>Equipo</th></tr></thead>
+        <tbody>
+          ${rows.map((r) => `<tr><td>${esc(r.label)}</td><td><strong>${esc(r.team)}</strong></td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `);
+}
+
+function predictionHonorTable(person) {
+  const podium = person.predictions?.podium || {};
+  const awards = person.predictions?.awards || {};
+  const rows = [
+    ['Campeón', podium.champion?.value],
+    ['Subcampeón', podium.runnerUp?.value],
+    ['3º puesto', podium.thirdPlace?.value],
+    ['Bota de Oro', awards.goldenBoot?.gold?.value],
+    ['Bota de Plata', awards.goldenBoot?.silver?.value],
+    ['Bota de Bronce', awards.goldenBoot?.bronze?.value],
+    ['Balón de Oro', awards.goldenBall?.gold?.value],
+    ['Balón de Plata', awards.goldenBall?.silver?.value],
+    ['Balón de Bronce', awards.goldenBall?.bronze?.value]
+  ];
+  return predictionSection('Honor y premios', `
+    <div class="excel-wrap">
+      <table class="excel-table">
+        <thead><tr><th>Concepto</th><th>Predicción</th></tr></thead>
+        <tbody>
+          ${rows.map(([label, value]) => `<tr><td>${esc(label)}</td><td><strong>${esc(value || '')}</strong></td></tr>`).join('')}
+        </tbody>
+      </table>
+    </div>
+  `);
+}
+
+function predictionSection(title, html) {
+  return `<article class="prediction-card"><h3>${esc(title)}</h3>${html}</article>`;
+}
+
+function formatPredictionScore(match) {
+  if (!match?.valid) return match?.raw || '';
+  const teams = match.prefix ? `${match.prefix} · ` : '';
+  return `${teams}${match.sign || ''}|${match.homeGoals}-${match.awayGoals}`;
+}
+
+function groupLetters(groups, matches) {
+  const set = new Set(Object.keys(groups || {}));
+  for (const match of matches || []) {
+    if (match.stage === 'group' && match.group) set.add(match.group);
+  }
+  return [...set].sort();
+}
+
+function groupRows(group, groups, matches) {
+  const table = groups?.[group] || [];
+  if (table.length) return table;
+
+  const teams = [];
+  const seen = new Set();
+  for (const match of matches || []) {
+    if (match.stage !== 'group' || match.group !== group) continue;
+    for (const team of [match.homeTeam, match.awayTeam]) {
+      if (!team || seen.has(team)) continue;
+      seen.add(team);
+      teams.push({ team, position: teams.length + 1, points: 0, goalDifference: 0 });
+    }
+  }
+  return teams;
 }
 
 function render() {
+  renderTabs();
   renderStatus();
   renderAlerts();
   renderFunFacts();
@@ -246,12 +453,33 @@ function render() {
   renderMatches();
   renderQualified();
   renderGroups();
+  renderPredictions();
 }
 
 $('#refreshBtn').addEventListener('click', forceRefresh);
 $('#searchInput').addEventListener('input', (ev) => {
   filter = ev.target.value;
   renderLeaderboard();
+});
+
+$('#groupSelect').addEventListener('change', (ev) => {
+  selectedGroup = ev.target.value;
+  renderGroups();
+});
+
+$('#predictionParticipantSelect').addEventListener('change', (ev) => {
+  selectedPredictionParticipantId = ev.target.value;
+  selectedParticipantId = ev.target.value;
+  renderLeaderboard();
+  renderParticipantDetails();
+  renderPredictions();
+});
+
+document.querySelectorAll('.tab-button').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    activeTab = btn.dataset.tab;
+    renderTabs();
+  });
 });
 
 loadDashboard();

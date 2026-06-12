@@ -3,16 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Porra Mundial 2026</title>
+  <title>Mundial 2026</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <div class="page-shell">
     <header class="hero">
       <div>
-        <p class="eyebrow">🏆 Mundial 2026 · Porra Rodri</p>
-        <h1>Clasificación viva de la porra</h1>
-        <p class="subtitle">Resultados desde API abierta, Excels de participantes y recálculo automático cada 5 minutos.</p>
+        <h1>Mundial 2026</h1>
       </div>
       <div class="hero-actions">
         <button id="refreshBtn">Actualizar ahora</button>
@@ -22,80 +20,94 @@
 
     <section id="alerts" class="alerts"></section>
 
-    <section class="grid kpis" id="funFacts"></section>
+    <nav class="tabs" aria-label="Secciones">
+      <button class="tab-button active" data-tab="dashboard">Clasificación</button>
+      <button class="tab-button" data-tab="predictions">Predicciones</button>
+    </nav>
 
-    <main class="layout">
-      <section class="card leaderboard-card">
-        <div class="card-header">
-          <div>
-            <h2>Clasificación</h2>
-            <p>Ordenada por puntos totales y marcadores exactos.</p>
+    <section id="dashboardView" class="tab-view active">
+      <section class="grid kpis" id="funFacts"></section>
+
+      <main class="layout">
+        <section class="card leaderboard-card">
+          <div class="card-header">
+            <div>
+              <h2>Clasificación</h2>
+            </div>
+            <input id="searchInput" type="search" placeholder="Buscar participante…">
           </div>
-          <input id="searchInput" type="search" placeholder="Buscar participante…">
-        </div>
-        <div class="table-wrap">
-          <table id="leaderboardTable">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Participante</th>
-                <th>Total</th>
-                <th>Exactos</th>
-                <th>Grupos</th>
-                <th>1/16</th>
-                <th>1/8</th>
-                <th>1/4</th>
-                <th>Semis</th>
-                <th>Honor</th>
-                <th>Premios</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
+          <div class="table-wrap">
+            <table id="leaderboardTable">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Participante</th>
+                  <th>Total</th>
+                  <th>Exactos</th>
+                  <th>Grupos</th>
+                  <th>1/16</th>
+                  <th>1/8</th>
+                  <th>1/4</th>
+                  <th>Semis</th>
+                  <th>Honor</th>
+                  <th>Premios</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </section>
+
+        <aside class="card details-card">
+          <div class="card-header">
+            <div>
+              <h2>Detalle del jugador</h2>
+              <p id="detailSubtitle"></p>
+            </div>
+          </div>
+          <div id="participantDetails" class="details"></div>
+        </aside>
+      </main>
+
+      <section class="grid two-cols">
+        <article class="card">
+          <div class="card-header">
+            <div>
+              <h2>Partidos</h2>
+            </div>
+          </div>
+          <div id="matchesList" class="match-list"></div>
+        </article>
+
+        <article class="card">
+          <div class="card-header">
+            <div>
+              <h2>Cuadro y clasificados</h2>
+            </div>
+          </div>
+          <div id="qualifiedList" class="qualified-list"></div>
+        </article>
       </section>
 
-      <aside class="card details-card">
+      <section class="card">
         <div class="card-header">
           <div>
-            <h2>Detalle del líder</h2>
-            <p id="detailSubtitle">Aciertos destacados.</p>
+            <h2>Grupos</h2>
           </div>
+          <select id="groupSelect" aria-label="Seleccionar grupo"></select>
         </div>
-        <div id="participantDetails" class="details"></div>
-      </aside>
-    </main>
-
-    <section class="grid two-cols">
-      <article class="card">
-        <div class="card-header">
-          <div>
-            <h2>Próximos / últimos partidos</h2>
-            <p>Sirve para seguir qué puede mover la clasificación.</p>
-          </div>
-        </div>
-        <div id="matchesList" class="match-list"></div>
-      </article>
-
-      <article class="card">
-        <div class="card-header">
-          <div>
-            <h2>Cuadro y clasificados</h2>
-            <p>Se actualiza según se cierran rondas.</p>
-          </div>
-        </div>
-        <div id="qualifiedList" class="qualified-list"></div>
-      </article>
+        <div id="groupsGrid" class="groups-grid"></div>
+      </section>
     </section>
 
-    <section class="card">
+    <section id="predictionsView" class="tab-view">
       <div class="card-header">
         <div>
-          <h2>Grupos</h2>
-          <p>Tabla actual de cada grupo cuando la API la proporciona o puede calcularse.</p>
+          <h2>Predicciones</h2>
         </div>
+        <select id="predictionParticipantSelect" aria-label="Seleccionar participante"></select>
       </div>
-      <div id="groupsGrid" class="groups-grid"></div>
+      <div id="predictionsContent"></div>
     </section>
   </div>
 
