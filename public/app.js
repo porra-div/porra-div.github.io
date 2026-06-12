@@ -318,17 +318,15 @@ function renderPredictionsPanel() {
   }
   const person = participants.find((p) => p.id === selectedPredictionParticipantId) || participants[0];
   $('#predictionsTitle').textContent = `Predicciones de ${person.name}`;
-  $('#predictionsSubtitle').textContent = 'Verde acertado · Rojo fallado · Amarillo pendiente';
+  $('#predictionsSubtitle').textContent = 'Verde acertado · Borde dorado resultado exacto · Rojo fallado · Amarillo pendiente';
 
   content.innerHTML = `
     <div class="prediction-player-list">
       ${participants.map((p) => `<button class="small-button ${p.id === person.id ? 'active' : ''}" data-prediction-player="${esc(p.id)}" type="button">${esc(p.name)}</button>`).join('')}
     </div>
-    <div class="prediction-grid">
+    <div class="prediction-grid predictions-only">
       ${predictionMatchesTable(person)}
-      ${predictionGroupTable(person)}
-      ${predictionQualifiersTable(person)}
-      ${predictionHonorTable(person)}
+      ${predictionBracket(person)}
     </div>
   `;
   document.querySelectorAll('[data-prediction-player]').forEach((btn) => {
@@ -343,11 +341,13 @@ function renderPredictionsPanel() {
 }
 
 function predictionMatchesTable(person) {
-  const rows = Object.values(person.predictions?.matches || {}).sort((a, b) => a.matchNumber - b.matchNumber);
-  return predictionSection('Partidos', `
+  const rows = Object.values(person.predictions?.matches || {})
+    .filter((m) => m.valid)
+    .sort((a, b) => a.matchNumber - b.matchNumber);
+  return predictionSection('Predicciones', `
     <div class="excel-wrap">
       <table class="excel-table predictions-matches">
-        <thead><tr><th>#</th><th>Fase</th><th>Partido</th><th>Pronóstico</th><th>Real</th><th>Estado</th></tr></thead>
+        <thead><tr><th>#</th><th>Fase</th><th>Partido</th><th>Predicción</th><th>Real</th><th>Estado</th></tr></thead>
         <tbody>
           ${rows.map((m) => {
             const status = matchPredictionStatus(m);
@@ -363,6 +363,38 @@ function predictionMatchesTable(person) {
           `}).join('')}
         </tbody>
       </table>
+    </div>
+  `);
+}
+
+function predictionBracket(person) {
+  const matches = Object.values(person.predictions?.matches || {})
+    .filter((m) => Number(m.matchNumber) >= 73)
+    .sort((a, b) => a.matchNumber - b.matchNumber);
+  const rounds = [
+    ['round32', 'Dieciseisavos'],
+    ['round16', 'Octavos'],
+    ['quarter', 'Cuartos'],
+    ['semi', 'Semifinales'],
+    ['final', 'Final']
+  ];
+  return predictionSection('Cruces', `
+    <div class="bracket">
+      ${rounds.map(([stage, label]) => `
+        <div class="bracket-round">
+          <h4>${esc(label)}</h4>
+          ${(matches.filter((m) => m.stage === stage)).map((m) => {
+            const status = matchPredictionStatus(m);
+            return `
+              <div class="bracket-match ${status.className}">
+                <div class="bracket-teams">${esc(bracketLabel(m))}</div>
+                <div class="bracket-score">${esc(formatPredictionScore(m))}</div>
+                <div class="bracket-state">${esc(status.label)}</div>
+              </div>
+            `;
+          }).join('') || `<div class="muted">Pendiente</div>`}
+        </div>
+      `).join('')}
     </div>
   `);
 }
@@ -448,6 +480,12 @@ function formatPredictionScore(match) {
   return `${teams}${match.sign || ''}|${match.homeGoals}-${match.awayGoals}`;
 }
 
+function bracketLabel(match) {
+  if (match.prefix) return match.prefix;
+  if (match.label) return match.label;
+  return `${match.homeLabel || 'TBD'}-${match.awayLabel || 'TBD'}`;
+}
+
 function matchPredictionStatus(prediction) {
   const actual = (state.dashboard?.actual?.matches || []).find((m) => Number(m.matchNumber) === Number(prediction.matchNumber));
   if (!prediction?.valid || !actual?.finished) {
@@ -456,7 +494,7 @@ function matchPredictionStatus(prediction) {
   const exact = Number(prediction.homeGoals) === Number(actual.homeScore) && Number(prediction.awayGoals) === Number(actual.awayScore);
   const sign = scoreSign(prediction.homeGoals, prediction.awayGoals) === scoreSign(actual.homeScore, actual.awayScore);
   return {
-    className: exact || sign ? 'status-hit' : 'status-miss',
+    className: exact ? 'status-exact' : (sign ? 'status-hit' : 'status-miss'),
     label: exact ? 'Exacto' : (sign ? 'Signo' : 'Fallado'),
     actualText: `${actual.homeScore}-${actual.awayScore}`
   };

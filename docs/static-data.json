@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-12T07:17:59.432Z",
+  "generatedAt": "2026-06-12T09:54:17.793Z",
   "participants": [
     {
       "id": "excel-mundial-2026-adri-xlsx",
@@ -2402,6 +2402,2413 @@
               "row": 258,
               "value": "Kylian Mbappé",
               "name": "Kylian Mbappé"
+            }
+          }
+        }
+      },
+      "warnings": []
+    },
+    {
+      "id": "excel-mundial-2026-arturo-xlsx",
+      "name": "Arturo",
+      "file": "Excel Mundial 2026 Arturo.xlsx",
+      "predictions": {
+        "matches": {
+          "1": {
+            "row": 6,
+            "stage": "group",
+            "matchNumber": 1,
+            "label": "México-Sudáfrica",
+            "homeLabel": "México",
+            "awayLabel": "Sudáfrica",
+            "raw": "1|2-0",
+            "prefix": "",
+            "scoreText": "1|2-0",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "2": {
+            "row": 7,
+            "stage": "group",
+            "matchNumber": 2,
+            "label": "Corea del Sur-República Checa",
+            "homeLabel": "Corea del Sur",
+            "awayLabel": "República Checa",
+            "raw": "1|1-0",
+            "prefix": "",
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "3": {
+            "row": 8,
+            "stage": "group",
+            "matchNumber": 3,
+            "label": "Canadá-Bosnia y Herzegovina",
+            "homeLabel": "Canadá",
+            "awayLabel": "Bosnia y Herzegovina",
+            "raw": "1|1-0",
+            "prefix": "",
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "4": {
+            "row": 9,
+            "stage": "group",
+            "matchNumber": 4,
+            "label": "Catar-Suiza",
+            "homeLabel": "Catar",
+            "awayLabel": "Suiza",
+            "raw": "X|1-1",
+            "prefix": "",
+            "scoreText": "X|1-1",
+            "sign": "X",
+            "homeGoals": 1,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "5": {
+            "row": 10,
+            "stage": "group",
+            "matchNumber": 5,
+            "label": "Brasil-Marruecos",
+            "homeLabel": "Brasil",
+            "awayLabel": "Marruecos",
+            "raw": "1|2-1",
+            "prefix": "",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "6": {
+            "row": 11,
+            "stage": "group",
+            "matchNumber": 6,
+            "label": "Haití-Escocia",
+            "homeLabel": "Haití",
+            "awayLabel": "Escocia",
+            "raw": "2|0-1",
+            "prefix": "",
+            "scoreText": "2|0-1",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "7": {
+            "row": 12,
+            "stage": "group",
+            "matchNumber": 7,
+            "label": "Estados Unidos-Paraguay",
+            "homeLabel": "Estados Unidos",
+            "awayLabel": "Paraguay",
+            "raw": "2|1-2",
+            "prefix": "",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "8": {
+            "row": 13,
+            "stage": "group",
+            "matchNumber": 8,
+            "label": "Australia-Turquía",
+            "homeLabel": "Australia",
+            "awayLabel": "Turquía",
+            "raw": "X|1-1",
+            "prefix": "",
+            "scoreText": "X|1-1",
+            "sign": "X",
+            "homeGoals": 1,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "9": {
+            "row": 14,
+            "stage": "group",
+            "matchNumber": 9,
+            "label": "Alemania-Curazao",
+            "homeLabel": "Alemania",
+            "awayLabel": "Curazao",
+            "raw": "1|3-0",
+            "prefix": "",
+            "scoreText": "1|3-0",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "10": {
+            "row": 15,
+            "stage": "group",
+            "matchNumber": 10,
+            "label": "Costa de Marfil-Ecuador",
+            "homeLabel": "Costa de Marfil",
+            "awayLabel": "Ecuador",
+            "raw": "1|1-0",
+            "prefix": "",
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "11": {
+            "row": 16,
+            "stage": "group",
+            "matchNumber": 11,
+            "label": "Países Bajos-Japón",
+            "homeLabel": "Países Bajos",
+            "awayLabel": "Japón",
+            "raw": "1|2-1",
+            "prefix": "",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "12": {
+            "row": 17,
+            "stage": "group",
+            "matchNumber": 12,
+            "label": "Suecia-Túnez",
+            "homeLabel": "Suecia",
+            "awayLabel": "Túnez",
+            "raw": "1|1-0",
+            "prefix": "",
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "13": {
+            "row": 18,
+            "stage": "group",
+            "matchNumber": 13,
+            "label": "Bélgica-Egipto",
+            "homeLabel": "Bélgica",
+            "awayLabel": "Egipto",
+            "raw": "1|3-0",
+            "prefix": "",
+            "scoreText": "1|3-0",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "14": {
+            "row": 19,
+            "stage": "group",
+            "matchNumber": 14,
+            "label": "Irán-Nueva Zelanda",
+            "homeLabel": "Irán",
+            "awayLabel": "Nueva Zelanda",
+            "raw": "X|0-0",
+            "prefix": "",
+            "scoreText": "X|0-0",
+            "sign": "X",
+            "homeGoals": 0,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "15": {
+            "row": 20,
+            "stage": "group",
+            "matchNumber": 15,
+            "label": "España-Cabo Verde",
+            "homeLabel": "España",
+            "awayLabel": "Cabo Verde",
+            "raw": "1|2-0",
+            "prefix": "",
+            "scoreText": "1|2-0",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "16": {
+            "row": 21,
+            "stage": "group",
+            "matchNumber": 16,
+            "label": "Arabia Saudita-Uruguay",
+            "homeLabel": "Arabia Saudita",
+            "awayLabel": "Uruguay",
+            "raw": "2|0-1",
+            "prefix": "",
+            "scoreText": "2|0-1",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "17": {
+            "row": 22,
+            "stage": "group",
+            "matchNumber": 17,
+            "label": "Francia-Senegal",
+            "homeLabel": "Francia",
+            "awayLabel": "Senegal",
+            "raw": "1|3-0",
+            "prefix": "",
+            "scoreText": "1|3-0",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "18": {
+            "row": 23,
+            "stage": "group",
+            "matchNumber": 18,
+            "label": "Irak-Noruega",
+            "homeLabel": "Irak",
+            "awayLabel": "Noruega",
+            "raw": "2|0-1",
+            "prefix": "",
+            "scoreText": "2|0-1",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "19": {
+            "row": 24,
+            "stage": "group",
+            "matchNumber": 19,
+            "label": "Argentina-Argelia",
+            "homeLabel": "Argentina",
+            "awayLabel": "Argelia",
+            "raw": "1|4-0",
+            "prefix": "",
+            "scoreText": "1|4-0",
+            "sign": "1",
+            "homeGoals": 4,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "20": {
+            "row": 25,
+            "stage": "group",
+            "matchNumber": 20,
+            "label": "Austria-Jordania",
+            "homeLabel": "Austria",
+            "awayLabel": "Jordania",
+            "raw": "X|1-1",
+            "prefix": "",
+            "scoreText": "X|1-1",
+            "sign": "X",
+            "homeGoals": 1,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "21": {
+            "row": 26,
+            "stage": "group",
+            "matchNumber": 21,
+            "label": "Portugal-RD Congo",
+            "homeLabel": "Portugal",
+            "awayLabel": "RD Congo",
+            "raw": "1|5-0",
+            "prefix": "",
+            "scoreText": "1|5-0",
+            "sign": "1",
+            "homeGoals": 5,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "22": {
+            "row": 27,
+            "stage": "group",
+            "matchNumber": 22,
+            "label": "Uzbekistán-Colombia",
+            "homeLabel": "Uzbekistán",
+            "awayLabel": "Colombia",
+            "raw": "2|0-1",
+            "prefix": "",
+            "scoreText": "2|0-1",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "23": {
+            "row": 28,
+            "stage": "group",
+            "matchNumber": 23,
+            "label": "Inglaterra-Croacia",
+            "homeLabel": "Inglaterra",
+            "awayLabel": "Croacia",
+            "raw": "1|2-1",
+            "prefix": "",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "24": {
+            "row": 29,
+            "stage": "group",
+            "matchNumber": 24,
+            "label": "Ghana-Panamá",
+            "homeLabel": "Ghana",
+            "awayLabel": "Panamá",
+            "raw": "X|1-1",
+            "prefix": "",
+            "scoreText": "X|1-1",
+            "sign": "X",
+            "homeGoals": 1,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "25": {
+            "row": 30,
+            "stage": "group",
+            "matchNumber": 25,
+            "label": "República Checa-Sudáfrica",
+            "homeLabel": "República Checa",
+            "awayLabel": "Sudáfrica",
+            "raw": "2|1-2",
+            "prefix": "",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "26": {
+            "row": 31,
+            "stage": "group",
+            "matchNumber": 26,
+            "label": "México-Corea del Sur",
+            "homeLabel": "México",
+            "awayLabel": "Corea del Sur",
+            "raw": "X|2-2",
+            "prefix": "",
+            "scoreText": "X|2-2",
+            "sign": "X",
+            "homeGoals": 2,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "27": {
+            "row": 32,
+            "stage": "group",
+            "matchNumber": 27,
+            "label": "Suiza-Bosnia y Herzegovina",
+            "homeLabel": "Suiza",
+            "awayLabel": "Bosnia y Herzegovina",
+            "raw": "1|1-0",
+            "prefix": "",
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "28": {
+            "row": 33,
+            "stage": "group",
+            "matchNumber": 28,
+            "label": "Canadá-Catar",
+            "homeLabel": "Canadá",
+            "awayLabel": "Catar",
+            "raw": "X|2-2",
+            "prefix": "",
+            "scoreText": "X|2-2",
+            "sign": "X",
+            "homeGoals": 2,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "29": {
+            "row": 34,
+            "stage": "group",
+            "matchNumber": 29,
+            "label": "Escocia-Marruecos",
+            "homeLabel": "Escocia",
+            "awayLabel": "Marruecos",
+            "raw": "2|0-3",
+            "prefix": "",
+            "scoreText": "2|0-3",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 3,
+            "valid": true
+          },
+          "30": {
+            "row": 35,
+            "stage": "group",
+            "matchNumber": 30,
+            "label": "Brasil-Haití",
+            "homeLabel": "Brasil",
+            "awayLabel": "Haití",
+            "raw": "1|3-0",
+            "prefix": "",
+            "scoreText": "1|3-0",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "31": {
+            "row": 36,
+            "stage": "group",
+            "matchNumber": 31,
+            "label": "Estados Unidos-Australia",
+            "homeLabel": "Estados Unidos",
+            "awayLabel": "Australia",
+            "raw": "X|1-1",
+            "prefix": "",
+            "scoreText": "X|1-1",
+            "sign": "X",
+            "homeGoals": 1,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "32": {
+            "row": 37,
+            "stage": "group",
+            "matchNumber": 32,
+            "label": "Turquía-Paraguay",
+            "homeLabel": "Turquía",
+            "awayLabel": "Paraguay",
+            "raw": "1|2-1",
+            "prefix": "",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "33": {
+            "row": 38,
+            "stage": "group",
+            "matchNumber": 33,
+            "label": "Alemania-Costa de Marfil",
+            "homeLabel": "Alemania",
+            "awayLabel": "Costa de Marfil",
+            "raw": "1|2-0",
+            "prefix": "",
+            "scoreText": "1|2-0",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "34": {
+            "row": 39,
+            "stage": "group",
+            "matchNumber": 34,
+            "label": "Ecuador-Curazao",
+            "homeLabel": "Ecuador",
+            "awayLabel": "Curazao",
+            "raw": "X|1-1",
+            "prefix": "",
+            "scoreText": "X|1-1",
+            "sign": "X",
+            "homeGoals": 1,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "35": {
+            "row": 40,
+            "stage": "group",
+            "matchNumber": 35,
+            "label": "Países Bajos-Suecia",
+            "homeLabel": "Países Bajos",
+            "awayLabel": "Suecia",
+            "raw": "1|3-1",
+            "prefix": "",
+            "scoreText": "1|3-1",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "36": {
+            "row": 41,
+            "stage": "group",
+            "matchNumber": 36,
+            "label": "Túnez-Japón",
+            "homeLabel": "Túnez",
+            "awayLabel": "Japón",
+            "raw": "2|1-2",
+            "prefix": "",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "37": {
+            "row": 42,
+            "stage": "group",
+            "matchNumber": 37,
+            "label": "Bélgica-Irán",
+            "homeLabel": "Bélgica",
+            "awayLabel": "Irán",
+            "raw": "1|3-0",
+            "prefix": "",
+            "scoreText": "1|3-0",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "38": {
+            "row": 43,
+            "stage": "group",
+            "matchNumber": 38,
+            "label": "Nueva Zelanda-Egipto",
+            "homeLabel": "Nueva Zelanda",
+            "awayLabel": "Egipto",
+            "raw": "1|2-1",
+            "prefix": "",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "39": {
+            "row": 44,
+            "stage": "group",
+            "matchNumber": 39,
+            "label": "España-Arabia Saudita",
+            "homeLabel": "España",
+            "awayLabel": "Arabia Saudita",
+            "raw": "1|3-0",
+            "prefix": "",
+            "scoreText": "1|3-0",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "40": {
+            "row": 45,
+            "stage": "group",
+            "matchNumber": 40,
+            "label": "Uruguay-Cabo Verde",
+            "homeLabel": "Uruguay",
+            "awayLabel": "Cabo Verde",
+            "raw": "1|2-1",
+            "prefix": "",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "41": {
+            "row": 46,
+            "stage": "group",
+            "matchNumber": 41,
+            "label": "Francia-Irak",
+            "homeLabel": "Francia",
+            "awayLabel": "Irak",
+            "raw": "1|2-0",
+            "prefix": "",
+            "scoreText": "1|2-0",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "42": {
+            "row": 47,
+            "stage": "group",
+            "matchNumber": 42,
+            "label": "Noruega-Senegal",
+            "homeLabel": "Noruega",
+            "awayLabel": "Senegal",
+            "raw": "2|0-1",
+            "prefix": "",
+            "scoreText": "2|0-1",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "43": {
+            "row": 48,
+            "stage": "group",
+            "matchNumber": 43,
+            "label": "Argentina-Austria",
+            "homeLabel": "Argentina",
+            "awayLabel": "Austria",
+            "raw": "1|3-1",
+            "prefix": "",
+            "scoreText": "1|3-1",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "44": {
+            "row": 49,
+            "stage": "group",
+            "matchNumber": 44,
+            "label": "Jordania-Argelia",
+            "homeLabel": "Jordania",
+            "awayLabel": "Argelia",
+            "raw": "X|2-2",
+            "prefix": "",
+            "scoreText": "X|2-2",
+            "sign": "X",
+            "homeGoals": 2,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "45": {
+            "row": 50,
+            "stage": "group",
+            "matchNumber": 45,
+            "label": "Portugal-Uzbekistán",
+            "homeLabel": "Portugal",
+            "awayLabel": "Uzbekistán",
+            "raw": "1|4-1",
+            "prefix": "",
+            "scoreText": "1|4-1",
+            "sign": "1",
+            "homeGoals": 4,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "46": {
+            "row": 51,
+            "stage": "group",
+            "matchNumber": 46,
+            "label": "Colombia-RD Congo",
+            "homeLabel": "Colombia",
+            "awayLabel": "RD Congo",
+            "raw": "1|2-1",
+            "prefix": "",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "47": {
+            "row": 52,
+            "stage": "group",
+            "matchNumber": 47,
+            "label": "Inglaterra-Ghana",
+            "homeLabel": "Inglaterra",
+            "awayLabel": "Ghana",
+            "raw": "1|4-1",
+            "prefix": "",
+            "scoreText": "1|4-1",
+            "sign": "1",
+            "homeGoals": 4,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "48": {
+            "row": 53,
+            "stage": "group",
+            "matchNumber": 48,
+            "label": "Panamá-Croacia",
+            "homeLabel": "Panamá",
+            "awayLabel": "Croacia",
+            "raw": "2|1-2",
+            "prefix": "",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "49": {
+            "row": 54,
+            "stage": "group",
+            "matchNumber": 49,
+            "label": "República Checa-México",
+            "homeLabel": "República Checa",
+            "awayLabel": "México",
+            "raw": "2|1-2",
+            "prefix": "",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "50": {
+            "row": 55,
+            "stage": "group",
+            "matchNumber": 50,
+            "label": "Sudáfrica-Corea del Sur",
+            "homeLabel": "Sudáfrica",
+            "awayLabel": "Corea del Sur",
+            "raw": "2|1-2",
+            "prefix": "",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "51": {
+            "row": 56,
+            "stage": "group",
+            "matchNumber": 51,
+            "label": "Suiza-Canadá",
+            "homeLabel": "Suiza",
+            "awayLabel": "Canadá",
+            "raw": "1|1-0",
+            "prefix": "",
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "52": {
+            "row": 57,
+            "stage": "group",
+            "matchNumber": 52,
+            "label": "Bosnia y Herzegovina-Catar",
+            "homeLabel": "Bosnia y Herzegovina",
+            "awayLabel": "Catar",
+            "raw": "1|2-1",
+            "prefix": "",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "53": {
+            "row": 58,
+            "stage": "group",
+            "matchNumber": 53,
+            "label": "Escocia-Brasil",
+            "homeLabel": "Escocia",
+            "awayLabel": "Brasil",
+            "raw": "2|1-4",
+            "prefix": "",
+            "scoreText": "2|1-4",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 4,
+            "valid": true
+          },
+          "54": {
+            "row": 59,
+            "stage": "group",
+            "matchNumber": 54,
+            "label": "Marruecos-Haití",
+            "homeLabel": "Marruecos",
+            "awayLabel": "Haití",
+            "raw": "1|4-0",
+            "prefix": "",
+            "scoreText": "1|4-0",
+            "sign": "1",
+            "homeGoals": 4,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "55": {
+            "row": 60,
+            "stage": "group",
+            "matchNumber": 55,
+            "label": "Turquía-Estados Unidos",
+            "homeLabel": "Turquía",
+            "awayLabel": "Estados Unidos",
+            "raw": "1|2-0",
+            "prefix": "",
+            "scoreText": "1|2-0",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "56": {
+            "row": 61,
+            "stage": "group",
+            "matchNumber": 56,
+            "label": "Paraguay-Australia",
+            "homeLabel": "Paraguay",
+            "awayLabel": "Australia",
+            "raw": "X|1-1",
+            "prefix": "",
+            "scoreText": "X|1-1",
+            "sign": "X",
+            "homeGoals": 1,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "57": {
+            "row": 62,
+            "stage": "group",
+            "matchNumber": 57,
+            "label": "Curazao-Costa de Marfil",
+            "homeLabel": "Curazao",
+            "awayLabel": "Costa de Marfil",
+            "raw": "1|1-0",
+            "prefix": "",
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "58": {
+            "row": 63,
+            "stage": "group",
+            "matchNumber": 58,
+            "label": "Ecuador-Alemania",
+            "homeLabel": "Ecuador",
+            "awayLabel": "Alemania",
+            "raw": "2|1-3",
+            "prefix": "",
+            "scoreText": "2|1-3",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 3,
+            "valid": true
+          },
+          "59": {
+            "row": 64,
+            "stage": "group",
+            "matchNumber": 59,
+            "label": "Japón-Suecia",
+            "homeLabel": "Japón",
+            "awayLabel": "Suecia",
+            "raw": "1|1-0",
+            "prefix": "",
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "60": {
+            "row": 65,
+            "stage": "group",
+            "matchNumber": 60,
+            "label": "Túnez-Países Bajos",
+            "homeLabel": "Túnez",
+            "awayLabel": "Países Bajos",
+            "raw": "2|0-2",
+            "prefix": "",
+            "scoreText": "2|0-2",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "61": {
+            "row": 66,
+            "stage": "group",
+            "matchNumber": 61,
+            "label": "Egipto-Irán",
+            "homeLabel": "Egipto",
+            "awayLabel": "Irán",
+            "raw": "X|2-2",
+            "prefix": "",
+            "scoreText": "X|2-2",
+            "sign": "X",
+            "homeGoals": 2,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "62": {
+            "row": 67,
+            "stage": "group",
+            "matchNumber": 62,
+            "label": "Nueva Zelanda-Bélgica",
+            "homeLabel": "Nueva Zelanda",
+            "awayLabel": "Bélgica",
+            "raw": "2|0-4",
+            "prefix": "",
+            "scoreText": "2|0-4",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 4,
+            "valid": true
+          },
+          "63": {
+            "row": 68,
+            "stage": "group",
+            "matchNumber": 63,
+            "label": "Cabo Verde-Arabia Saudita",
+            "homeLabel": "Cabo Verde",
+            "awayLabel": "Arabia Saudita",
+            "raw": "1|2-1",
+            "prefix": "",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "64": {
+            "row": 69,
+            "stage": "group",
+            "matchNumber": 64,
+            "label": "Uruguay-España",
+            "homeLabel": "Uruguay",
+            "awayLabel": "España",
+            "raw": "2|1-2",
+            "prefix": "",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "65": {
+            "row": 70,
+            "stage": "group",
+            "matchNumber": 65,
+            "label": "Noruega-Francia",
+            "homeLabel": "Noruega",
+            "awayLabel": "Francia",
+            "raw": "2|1-3",
+            "prefix": "",
+            "scoreText": "2|1-3",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 3,
+            "valid": true
+          },
+          "66": {
+            "row": 71,
+            "stage": "group",
+            "matchNumber": 66,
+            "label": "Senegal-Irak",
+            "homeLabel": "Senegal",
+            "awayLabel": "Irak",
+            "raw": "2|1-2",
+            "prefix": "",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "67": {
+            "row": 72,
+            "stage": "group",
+            "matchNumber": 67,
+            "label": "Argelia-Austria",
+            "homeLabel": "Argelia",
+            "awayLabel": "Austria",
+            "raw": "2|1-2",
+            "prefix": "",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "68": {
+            "row": 73,
+            "stage": "group",
+            "matchNumber": 68,
+            "label": "Jordania-Argentina",
+            "homeLabel": "Jordania",
+            "awayLabel": "Argentina",
+            "raw": "2|0-2",
+            "prefix": "",
+            "scoreText": "2|0-2",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "69": {
+            "row": 74,
+            "stage": "group",
+            "matchNumber": 69,
+            "label": "Colombia-Portugal",
+            "homeLabel": "Colombia",
+            "awayLabel": "Portugal",
+            "raw": "2|1-3",
+            "prefix": "",
+            "scoreText": "2|1-3",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 3,
+            "valid": true
+          },
+          "70": {
+            "row": 75,
+            "stage": "group",
+            "matchNumber": 70,
+            "label": "RD Congo-Uzbekistán",
+            "homeLabel": "RD Congo",
+            "awayLabel": "Uzbekistán",
+            "raw": "2|0-1",
+            "prefix": "",
+            "scoreText": "2|0-1",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "71": {
+            "row": 76,
+            "stage": "group",
+            "matchNumber": 71,
+            "label": "Panamá-Inglaterra",
+            "homeLabel": "Panamá",
+            "awayLabel": "Inglaterra",
+            "raw": "2|1-3",
+            "prefix": "",
+            "scoreText": "2|1-3",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 3,
+            "valid": true
+          },
+          "72": {
+            "row": 77,
+            "stage": "group",
+            "matchNumber": 72,
+            "label": "Croacia-Ghana",
+            "homeLabel": "Croacia",
+            "awayLabel": "Ghana",
+            "raw": "1|1-0",
+            "prefix": "",
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "73": {
+            "row": 164,
+            "stage": "round32",
+            "matchNumber": 73,
+            "label": "Corea del Sur-Canadá",
+            "homeLabel": "Corea del Sur",
+            "awayLabel": "Canadá",
+            "raw": "Corea del Sur-Canadá·1|2-1",
+            "prefix": "Corea del Sur-Canadá",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "74": {
+            "row": 165,
+            "stage": "round32",
+            "matchNumber": 74,
+            "label": "Brasil-Japón",
+            "homeLabel": "Brasil",
+            "awayLabel": "Japón",
+            "raw": "Brasil-Japón·1|3-1",
+            "prefix": "Brasil-Japón",
+            "scoreText": "1|3-1",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "75": {
+            "row": 166,
+            "stage": "round32",
+            "matchNumber": 75,
+            "label": "Alemania-Australia",
+            "homeLabel": "Alemania",
+            "awayLabel": "Australia",
+            "raw": "Alemania-Australia·1|3-0",
+            "prefix": "Alemania-Australia",
+            "scoreText": "1|3-0",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "76": {
+            "row": 167,
+            "stage": "round32",
+            "matchNumber": 76,
+            "label": "Países Bajos-Marruecos",
+            "homeLabel": "Países Bajos",
+            "awayLabel": "Marruecos",
+            "raw": "Países Bajos-Marruecos·2|1-2",
+            "prefix": "Países Bajos-Marruecos",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "77": {
+            "row": 168,
+            "stage": "round32",
+            "matchNumber": 77,
+            "label": "Curazao-Irak",
+            "homeLabel": "Curazao",
+            "awayLabel": "Irak",
+            "raw": "Curazao-Irak·1|1-0",
+            "prefix": "Curazao-Irak",
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "78": {
+            "row": 169,
+            "stage": "round32",
+            "matchNumber": 78,
+            "label": "Francia-Suecia",
+            "homeLabel": "Francia",
+            "awayLabel": "Suecia",
+            "raw": "Francia-Suecia·1|3-1",
+            "prefix": "Francia-Suecia",
+            "scoreText": "1|3-1",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "79": {
+            "row": 170,
+            "stage": "round32",
+            "matchNumber": 79,
+            "label": "México-Cabo Verde",
+            "homeLabel": "México",
+            "awayLabel": "Cabo Verde",
+            "raw": "México-Cabo Verde·1|2-0",
+            "prefix": "México-Cabo Verde",
+            "scoreText": "1|2-0",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "80": {
+            "row": 171,
+            "stage": "round32",
+            "matchNumber": 80,
+            "label": "Inglaterra-Uzbekistán",
+            "homeLabel": "Inglaterra",
+            "awayLabel": "Uzbekistán",
+            "raw": "Inglaterra-Uzbekistán·1|3-0",
+            "prefix": "Inglaterra-Uzbekistán",
+            "scoreText": "1|3-0",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "81": {
+            "row": 172,
+            "stage": "round32",
+            "matchNumber": 81,
+            "label": "Bélgica-Sudáfrica",
+            "homeLabel": "Bélgica",
+            "awayLabel": "Sudáfrica",
+            "raw": "Bélgica-Sudáfrica·1|4-0",
+            "prefix": "Bélgica-Sudáfrica",
+            "scoreText": "1|4-0",
+            "sign": "1",
+            "homeGoals": 4,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "82": {
+            "row": 173,
+            "stage": "round32",
+            "matchNumber": 82,
+            "label": "Turquía-Bosnia y Herzegovina",
+            "homeLabel": "Turquía",
+            "awayLabel": "Bosnia y Herzegovina",
+            "raw": "Turquía-Bosnia y Herzegovina·1|2-1",
+            "prefix": "Turquía-Bosnia y Herzegovina",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "83": {
+            "row": 174,
+            "stage": "round32",
+            "matchNumber": 83,
+            "label": "España-Austria",
+            "homeLabel": "España",
+            "awayLabel": "Austria",
+            "raw": "España-Austria·1|3-1",
+            "prefix": "España-Austria",
+            "scoreText": "1|3-1",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "84": {
+            "row": 175,
+            "stage": "round32",
+            "matchNumber": 84,
+            "label": "Colombia-Croacia",
+            "homeLabel": "Colombia",
+            "awayLabel": "Croacia",
+            "raw": "Colombia-Croacia·2|1-2",
+            "prefix": "Colombia-Croacia",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "85": {
+            "row": 176,
+            "stage": "round32",
+            "matchNumber": 85,
+            "label": "Suiza-Costa de Marfil",
+            "homeLabel": "Suiza",
+            "awayLabel": "Costa de Marfil",
+            "raw": "Suiza-Costa de Marfil·1|1-0",
+            "prefix": "Suiza-Costa de Marfil",
+            "scoreText": "1|1-0",
+            "sign": "1",
+            "homeGoals": 1,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "86": {
+            "row": 177,
+            "stage": "round32",
+            "matchNumber": 86,
+            "label": "Paraguay-Nueva Zelanda",
+            "homeLabel": "Paraguay",
+            "awayLabel": "Nueva Zelanda",
+            "raw": "Paraguay-Nueva Zelanda·2|0-1",
+            "prefix": "Paraguay-Nueva Zelanda",
+            "scoreText": "2|0-1",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "87": {
+            "row": 178,
+            "stage": "round32",
+            "matchNumber": 87,
+            "label": "Argentina-Uruguay",
+            "homeLabel": "Argentina",
+            "awayLabel": "Uruguay",
+            "raw": "Argentina-Uruguay·1|2-1",
+            "prefix": "Argentina-Uruguay",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "88": {
+            "row": 179,
+            "stage": "round32",
+            "matchNumber": 88,
+            "label": "Portugal-Senegal",
+            "homeLabel": "Portugal",
+            "awayLabel": "Senegal",
+            "raw": "Portugal-Senegal·1|3-0",
+            "prefix": "Portugal-Senegal",
+            "scoreText": "1|3-0",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "89": {
+            "row": 200,
+            "stage": "round16",
+            "matchNumber": 89,
+            "label": "Corea del Sur-Marruecos",
+            "homeLabel": "Corea del Sur",
+            "awayLabel": "Marruecos",
+            "raw": "Corea del Sur-Marruecos·2|1-2",
+            "prefix": "Corea del Sur-Marruecos",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "90": {
+            "row": 201,
+            "stage": "round16",
+            "matchNumber": 90,
+            "label": "Alemania-Francia",
+            "homeLabel": "Alemania",
+            "awayLabel": "Francia",
+            "raw": "Alemania-Francia·2|1-2",
+            "prefix": "Alemania-Francia",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "91": {
+            "row": 202,
+            "stage": "round16",
+            "matchNumber": 91,
+            "label": "Brasil-Curazao",
+            "homeLabel": "Brasil",
+            "awayLabel": "Curazao",
+            "raw": "Brasil-Curazao·1|2-0",
+            "prefix": "Brasil-Curazao",
+            "scoreText": "1|2-0",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "92": {
+            "row": 203,
+            "stage": "round16",
+            "matchNumber": 92,
+            "label": "México-Inglaterra",
+            "homeLabel": "México",
+            "awayLabel": "Inglaterra",
+            "raw": "México-Inglaterra·2|2-3",
+            "prefix": "México-Inglaterra",
+            "scoreText": "2|2-3",
+            "sign": "2",
+            "homeGoals": 2,
+            "awayGoals": 3,
+            "valid": true
+          },
+          "93": {
+            "row": 204,
+            "stage": "round16",
+            "matchNumber": 93,
+            "label": "Croacia-España",
+            "homeLabel": "Croacia",
+            "awayLabel": "España",
+            "raw": "Croacia-España·2|1-2",
+            "prefix": "Croacia-España",
+            "scoreText": "2|1-2",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "94": {
+            "row": 205,
+            "stage": "round16",
+            "matchNumber": 94,
+            "label": "Turquía-Bélgica",
+            "homeLabel": "Turquía",
+            "awayLabel": "Bélgica",
+            "raw": "Turquía-Bélgica·2|0-2",
+            "prefix": "Turquía-Bélgica",
+            "scoreText": "2|0-2",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "95": {
+            "row": 206,
+            "stage": "round16",
+            "matchNumber": 95,
+            "label": "Argentina-Nueva Zelanda",
+            "homeLabel": "Argentina",
+            "awayLabel": "Nueva Zelanda",
+            "raw": "Argentina-Nueva Zelanda·1|2-0",
+            "prefix": "Argentina-Nueva Zelanda",
+            "scoreText": "1|2-0",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 0,
+            "valid": true
+          },
+          "96": {
+            "row": 207,
+            "stage": "round16",
+            "matchNumber": 96,
+            "label": "Suiza-Portugal",
+            "homeLabel": "Suiza",
+            "awayLabel": "Portugal",
+            "raw": "Suiza-Portugal·2|1-3",
+            "prefix": "Suiza-Portugal",
+            "scoreText": "2|1-3",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 3,
+            "valid": true
+          },
+          "97": {
+            "row": 220,
+            "stage": "quarter",
+            "matchNumber": 97,
+            "label": "Francia-Marruecos",
+            "homeLabel": "Francia",
+            "awayLabel": "Marruecos",
+            "raw": "Francia-Marruecos·1|3-2",
+            "prefix": "Francia-Marruecos",
+            "scoreText": "1|3-2",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 2,
+            "valid": true
+          },
+          "98": {
+            "row": 221,
+            "stage": "quarter",
+            "matchNumber": 98,
+            "label": "España-Bélgica",
+            "homeLabel": "España",
+            "awayLabel": "Bélgica",
+            "raw": "España-Bélgica·1|3-1",
+            "prefix": "España-Bélgica",
+            "scoreText": "1|3-1",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "99": {
+            "row": 222,
+            "stage": "quarter",
+            "matchNumber": 99,
+            "label": "Brasil-Inglaterra",
+            "homeLabel": "Brasil",
+            "awayLabel": "Inglaterra",
+            "raw": "Brasil-Inglaterra·1|2-1",
+            "prefix": "Brasil-Inglaterra",
+            "scoreText": "1|2-1",
+            "sign": "1",
+            "homeGoals": 2,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "100": {
+            "row": 223,
+            "stage": "quarter",
+            "matchNumber": 100,
+            "label": "Argentina-Portugal",
+            "homeLabel": "Argentina",
+            "awayLabel": "Portugal",
+            "raw": "Argentina-Portugal·2|1-3",
+            "prefix": "Argentina-Portugal",
+            "scoreText": "2|1-3",
+            "sign": "2",
+            "homeGoals": 1,
+            "awayGoals": 3,
+            "valid": true
+          },
+          "101": {
+            "row": 232,
+            "stage": "semi",
+            "matchNumber": 101,
+            "label": "Francia-España",
+            "homeLabel": "Francia",
+            "awayLabel": "España",
+            "raw": "Francia-España·2|2-3",
+            "prefix": "Francia-España",
+            "scoreText": "2|2-3",
+            "sign": "2",
+            "homeGoals": 2,
+            "awayGoals": 3,
+            "valid": true
+          },
+          "102": {
+            "row": 233,
+            "stage": "semi",
+            "matchNumber": 102,
+            "label": "Brasil-Portugal",
+            "homeLabel": "Brasil",
+            "awayLabel": "Portugal",
+            "raw": "Brasil-Portugal·2|0-1",
+            "prefix": "Brasil-Portugal",
+            "scoreText": "2|0-1",
+            "sign": "2",
+            "homeGoals": 0,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "103": {
+            "row": 244,
+            "stage": "third",
+            "matchNumber": 103,
+            "label": "Francia-Brasil",
+            "homeLabel": "Francia",
+            "awayLabel": "Brasil",
+            "raw": "Francia-Brasil·1|3-1",
+            "prefix": "Francia-Brasil",
+            "scoreText": "1|3-1",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 1,
+            "valid": true
+          },
+          "104": {
+            "row": 247,
+            "stage": "final",
+            "matchNumber": 104,
+            "label": "España-Portugal",
+            "homeLabel": "España",
+            "awayLabel": "Portugal",
+            "raw": "España-Portugal·1|3-2",
+            "prefix": "España-Portugal",
+            "scoreText": "1|3-2",
+            "sign": "1",
+            "homeGoals": 3,
+            "awayGoals": 2,
+            "valid": true
+          }
+        },
+        "groupPositions": [
+          {
+            "row": 80,
+            "group": "A",
+            "position": 1,
+            "label": "1º GRUPO A",
+            "value": "México",
+            "team": "Mexico"
+          },
+          {
+            "row": 81,
+            "group": "A",
+            "position": 2,
+            "label": "2º GRUPO A",
+            "value": "Corea del Sur",
+            "team": "South Korea"
+          },
+          {
+            "row": 82,
+            "group": "A",
+            "position": 3,
+            "label": "3º GRUPO A",
+            "value": "Sudáfrica",
+            "team": "South Africa"
+          },
+          {
+            "row": 83,
+            "group": "A",
+            "position": 4,
+            "label": "4º GRUPO A",
+            "value": "República Checa",
+            "team": "Czech Republic"
+          },
+          {
+            "row": 84,
+            "group": "B",
+            "position": 1,
+            "label": "1º GRUPO B",
+            "value": "Suiza",
+            "team": "Switzerland"
+          },
+          {
+            "row": 85,
+            "group": "B",
+            "position": 2,
+            "label": "2º GRUPO B",
+            "value": "Canadá",
+            "team": "Canada"
+          },
+          {
+            "row": 86,
+            "group": "B",
+            "position": 3,
+            "label": "3º GRUPO B",
+            "value": "Bosnia y Herzegovina",
+            "team": "Bosnia and Herzegovina"
+          },
+          {
+            "row": 87,
+            "group": "B",
+            "position": 4,
+            "label": "4º GRUPO B",
+            "value": "Catar",
+            "team": "Qatar"
+          },
+          {
+            "row": 88,
+            "group": "C",
+            "position": 1,
+            "label": "1º GRUPO C",
+            "value": "Brasil",
+            "team": "Brazil"
+          },
+          {
+            "row": 89,
+            "group": "C",
+            "position": 2,
+            "label": "2º GRUPO C",
+            "value": "Marruecos",
+            "team": "Morocco"
+          },
+          {
+            "row": 90,
+            "group": "C",
+            "position": 3,
+            "label": "3º GRUPO C",
+            "value": "Escocia",
+            "team": "Scotland"
+          },
+          {
+            "row": 91,
+            "group": "C",
+            "position": 4,
+            "label": "4º GRUPO C",
+            "value": "Haití",
+            "team": "Haiti"
+          },
+          {
+            "row": 92,
+            "group": "D",
+            "position": 1,
+            "label": "1º GRUPO D",
+            "value": "Turquía",
+            "team": "Turkey"
+          },
+          {
+            "row": 93,
+            "group": "D",
+            "position": 2,
+            "label": "2º GRUPO D",
+            "value": "Paraguay",
+            "team": "Paraguay"
+          },
+          {
+            "row": 94,
+            "group": "D",
+            "position": 3,
+            "label": "3º GRUPO D",
+            "value": "Australia",
+            "team": "Australia"
+          },
+          {
+            "row": 95,
+            "group": "D",
+            "position": 4,
+            "label": "4º GRUPO D",
+            "value": "Estados Unidos",
+            "team": "USA"
+          },
+          {
+            "row": 96,
+            "group": "E",
+            "position": 1,
+            "label": "1º GRUPO E",
+            "value": "Alemania",
+            "team": "Germany"
+          },
+          {
+            "row": 97,
+            "group": "E",
+            "position": 2,
+            "label": "2º GRUPO E",
+            "value": "Curazao",
+            "team": "Curacao"
+          },
+          {
+            "row": 98,
+            "group": "E",
+            "position": 3,
+            "label": "3º GRUPO E",
+            "value": "Costa de Marfil",
+            "team": "Ivory Coast"
+          },
+          {
+            "row": 99,
+            "group": "E",
+            "position": 4,
+            "label": "4º GRUPO E",
+            "value": "Ecuador",
+            "team": "Ecuador"
+          },
+          {
+            "row": 100,
+            "group": "F",
+            "position": 1,
+            "label": "1º GRUPO F",
+            "value": "Países Bajos",
+            "team": "Netherlands"
+          },
+          {
+            "row": 101,
+            "group": "F",
+            "position": 2,
+            "label": "2º GRUPO F",
+            "value": "Japón",
+            "team": "Japan"
+          },
+          {
+            "row": 102,
+            "group": "F",
+            "position": 3,
+            "label": "3º GRUPO F",
+            "value": "Suecia",
+            "team": "Sweden"
+          },
+          {
+            "row": 103,
+            "group": "F",
+            "position": 4,
+            "label": "4º GRUPO F",
+            "value": "Túnez",
+            "team": "Tunisia"
+          },
+          {
+            "row": 104,
+            "group": "G",
+            "position": 1,
+            "label": "1º GRUPO G",
+            "value": "Bélgica",
+            "team": "Belgium"
+          },
+          {
+            "row": 105,
+            "group": "G",
+            "position": 2,
+            "label": "2º GRUPO G",
+            "value": "Nueva Zelanda",
+            "team": "New Zealand"
+          },
+          {
+            "row": 106,
+            "group": "G",
+            "position": 3,
+            "label": "3º GRUPO G",
+            "value": "Irán",
+            "team": "Iran"
+          },
+          {
+            "row": 107,
+            "group": "G",
+            "position": 4,
+            "label": "4º GRUPO G",
+            "value": "Egipto",
+            "team": "Egypt"
+          },
+          {
+            "row": 108,
+            "group": "H",
+            "position": 1,
+            "label": "1º GRUPO H",
+            "value": "España",
+            "team": "Spain"
+          },
+          {
+            "row": 109,
+            "group": "H",
+            "position": 2,
+            "label": "2º GRUPO H",
+            "value": "Uruguay",
+            "team": "Uruguay"
+          },
+          {
+            "row": 110,
+            "group": "H",
+            "position": 3,
+            "label": "3º GRUPO H",
+            "value": "Cabo Verde",
+            "team": "Cape Verde"
+          },
+          {
+            "row": 111,
+            "group": "H",
+            "position": 4,
+            "label": "4º GRUPO H",
+            "value": "Arabia Saudita",
+            "team": "Saudi Arabia"
+          },
+          {
+            "row": 112,
+            "group": "I",
+            "position": 1,
+            "label": "1º GRUPO I",
+            "value": "Francia",
+            "team": "France"
+          },
+          {
+            "row": 113,
+            "group": "I",
+            "position": 2,
+            "label": "2º GRUPO I",
+            "value": "Irak",
+            "team": "Iraq"
+          },
+          {
+            "row": 114,
+            "group": "I",
+            "position": 3,
+            "label": "3º GRUPO I",
+            "value": "Senegal",
+            "team": "Senegal"
+          },
+          {
+            "row": 115,
+            "group": "I",
+            "position": 4,
+            "label": "4º GRUPO I",
+            "value": "Noruega",
+            "team": "Norway"
+          },
+          {
+            "row": 116,
+            "group": "J",
+            "position": 1,
+            "label": "1º GRUPO J",
+            "value": "Argentina",
+            "team": "Argentina"
+          },
+          {
+            "row": 117,
+            "group": "J",
+            "position": 2,
+            "label": "2º GRUPO J",
+            "value": "Austria",
+            "team": "Austria"
+          },
+          {
+            "row": 118,
+            "group": "J",
+            "position": 3,
+            "label": "3º GRUPO J",
+            "value": "Jordania",
+            "team": "Jordan"
+          },
+          {
+            "row": 119,
+            "group": "J",
+            "position": 4,
+            "label": "4º GRUPO J",
+            "value": "Argelia",
+            "team": "Algeria"
+          },
+          {
+            "row": 120,
+            "group": "K",
+            "position": 1,
+            "label": "1º GRUPO K",
+            "value": "Portugal",
+            "team": "Portugal"
+          },
+          {
+            "row": 121,
+            "group": "K",
+            "position": 2,
+            "label": "2º GRUPO K",
+            "value": "Colombia",
+            "team": "Colombia"
+          },
+          {
+            "row": 122,
+            "group": "K",
+            "position": 3,
+            "label": "3º GRUPO K",
+            "value": "Uzbekistán",
+            "team": "Uzbekistan"
+          },
+          {
+            "row": 123,
+            "group": "K",
+            "position": 4,
+            "label": "4º GRUPO K",
+            "value": "RD Congo",
+            "team": "DR Congo"
+          },
+          {
+            "row": 124,
+            "group": "L",
+            "position": 1,
+            "label": "1º GRUPO L",
+            "value": "Inglaterra",
+            "team": "England"
+          },
+          {
+            "row": 125,
+            "group": "L",
+            "position": 2,
+            "label": "2º GRUPO L",
+            "value": "Croacia",
+            "team": "Croatia"
+          },
+          {
+            "row": 126,
+            "group": "L",
+            "position": 3,
+            "label": "3º GRUPO L",
+            "value": "Panamá",
+            "team": "Panama"
+          },
+          {
+            "row": 127,
+            "group": "L",
+            "position": 4,
+            "label": "4º GRUPO L",
+            "value": "Ghana",
+            "team": "Ghana"
+          }
+        ],
+        "qualifiers": {
+          "round32": [
+            {
+              "row": 130,
+              "value": "Corea del Sur",
+              "team": "South Korea",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 131,
+              "value": "Brasil",
+              "team": "Brazil",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 132,
+              "value": "Alemania",
+              "team": "Germany",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 133,
+              "value": "Países Bajos",
+              "team": "Netherlands",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 134,
+              "value": "Curazao",
+              "team": "Curacao",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 135,
+              "value": "Francia",
+              "team": "France",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 136,
+              "value": "México",
+              "team": "Mexico",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 137,
+              "value": "Inglaterra",
+              "team": "England",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 138,
+              "value": "Bélgica",
+              "team": "Belgium",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 139,
+              "value": "Turquía",
+              "team": "Turkey",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 140,
+              "value": "España",
+              "team": "Spain",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 141,
+              "value": "Colombia",
+              "team": "Colombia",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 142,
+              "value": "Suiza",
+              "team": "Switzerland",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 143,
+              "value": "Paraguay",
+              "team": "Paraguay",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 144,
+              "value": "Argentina",
+              "team": "Argentina",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 145,
+              "value": "Portugal",
+              "team": "Portugal",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 146,
+              "value": "Canadá",
+              "team": "Canada",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 147,
+              "value": "Japón",
+              "team": "Japan",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 148,
+              "value": "Australia",
+              "team": "Australia",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 149,
+              "value": "Marruecos",
+              "team": "Morocco",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 150,
+              "value": "Irak",
+              "team": "Iraq",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 151,
+              "value": "Suecia",
+              "team": "Sweden",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 152,
+              "value": "Cabo Verde",
+              "team": "Cape Verde",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 153,
+              "value": "Uzbekistán",
+              "team": "Uzbekistan",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 154,
+              "value": "Sudáfrica",
+              "team": "South Africa",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 155,
+              "value": "Bosnia y Herzegovina",
+              "team": "Bosnia and Herzegovina",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 156,
+              "value": "Austria",
+              "team": "Austria",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 157,
+              "value": "Croacia",
+              "team": "Croatia",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 158,
+              "value": "Costa de Marfil",
+              "team": "Ivory Coast",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 159,
+              "value": "Nueva Zelanda",
+              "team": "New Zealand",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 160,
+              "value": "Uruguay",
+              "team": "Uruguay",
+              "label": "Dieciseisavofinalista"
+            },
+            {
+              "row": 161,
+              "value": "Senegal",
+              "team": "Senegal",
+              "label": "Dieciseisavofinalista"
+            }
+          ],
+          "round16": [
+            {
+              "row": 182,
+              "value": "Corea del Sur",
+              "team": "South Korea",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 183,
+              "value": "Alemania",
+              "team": "Germany",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 184,
+              "value": "Brasil",
+              "team": "Brazil",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 185,
+              "value": "México",
+              "team": "Mexico",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 186,
+              "value": "Croacia",
+              "team": "Croatia",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 187,
+              "value": "Turquía",
+              "team": "Turkey",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 188,
+              "value": "Argentina",
+              "team": "Argentina",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 189,
+              "value": "Suiza",
+              "team": "Switzerland",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 190,
+              "value": "Marruecos",
+              "team": "Morocco",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 191,
+              "value": "Francia",
+              "team": "France",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 192,
+              "value": "Curazao",
+              "team": "Curacao",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 193,
+              "value": "Inglaterra",
+              "team": "England",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 194,
+              "value": "España",
+              "team": "Spain",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 195,
+              "value": "Bélgica",
+              "team": "Belgium",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 196,
+              "value": "Nueva Zelanda",
+              "team": "New Zealand",
+              "label": "Octavofinalista"
+            },
+            {
+              "row": 197,
+              "value": "Portugal",
+              "team": "Portugal",
+              "label": "Octavofinalista"
+            }
+          ],
+          "quarter": [
+            {
+              "row": 210,
+              "value": "Francia",
+              "team": "France",
+              "label": "Cuartofinalista"
+            },
+            {
+              "row": 211,
+              "value": "España",
+              "team": "Spain",
+              "label": "Cuartofinalista"
+            },
+            {
+              "row": 212,
+              "value": "Brasil",
+              "team": "Brazil",
+              "label": "Cuartofinalista"
+            },
+            {
+              "row": 213,
+              "value": "Argentina",
+              "team": "Argentina",
+              "label": "Cuartofinalista"
+            },
+            {
+              "row": 214,
+              "value": "Marruecos",
+              "team": "Morocco",
+              "label": "Cuartofinalista"
+            },
+            {
+              "row": 215,
+              "value": "Bélgica",
+              "team": "Belgium",
+              "label": "Cuartofinalista"
+            },
+            {
+              "row": 216,
+              "value": "Inglaterra",
+              "team": "England",
+              "label": "Cuartofinalista"
+            },
+            {
+              "row": 217,
+              "value": "Portugal",
+              "team": "Portugal",
+              "label": "Cuartofinalista"
+            }
+          ],
+          "semi": [
+            {
+              "row": 226,
+              "value": "Francia",
+              "team": "France",
+              "label": "Semifinalista"
+            },
+            {
+              "row": 227,
+              "value": "Brasil",
+              "team": "Brazil",
+              "label": "Semifinalista"
+            },
+            {
+              "row": 228,
+              "value": "España",
+              "team": "Spain",
+              "label": "Semifinalista"
+            },
+            {
+              "row": 229,
+              "value": "Portugal",
+              "team": "Portugal",
+              "label": "Semifinalista"
+            }
+          ],
+          "thirdPlaceGame": [
+            {
+              "row": 236,
+              "value": "Francia",
+              "team": "France",
+              "label": "3º y 4º puesto"
+            },
+            {
+              "row": 237,
+              "value": "Brasil",
+              "team": "Brazil",
+              "label": "3º y 4º puesto"
+            }
+          ],
+          "final": [
+            {
+              "row": 240,
+              "value": "España",
+              "team": "Spain",
+              "label": "Finalista"
+            },
+            {
+              "row": 241,
+              "value": "Portugal",
+              "team": "Portugal",
+              "label": "Finalista"
+            }
+          ]
+        },
+        "podium": {
+          "champion": {
+            "row": 250,
+            "value": "España",
+            "team": "Spain"
+          },
+          "runnerUp": {
+            "row": 251,
+            "value": "Portugal",
+            "team": "Portugal"
+          },
+          "thirdPlace": {
+            "row": 252,
+            "value": "Francia",
+            "team": "France"
+          }
+        },
+        "awards": {
+          "goldenBoot": {
+            "gold": {
+              "row": 253,
+              "value": "Escribe un jugador",
+              "name": ""
+            },
+            "silver": {
+              "row": 254,
+              "value": "Escribe un jugador",
+              "name": ""
+            },
+            "bronze": {
+              "row": 255,
+              "value": "Escribe un jugador",
+              "name": ""
+            }
+          },
+          "goldenBall": {
+            "gold": {
+              "row": 256,
+              "value": "Escribe un jugador",
+              "name": ""
+            },
+            "silver": {
+              "row": 257,
+              "value": "Escribe un jugador",
+              "name": ""
+            },
+            "bronze": {
+              "row": 258,
+              "value": "Escribe un jugador",
+              "name": ""
             }
           }
         }
@@ -13578,8 +15985,7 @@
       "Iran",
       "Croatia"
     ],
-    "fetchedAt": "2026-06-12T06:54:37.716Z",
-    "source": "https://worldcup26.ir (cache)",
-    "apiWarning": "No se pudo refrescar la API: fetch failed. Usando caché."
+    "fetchedAt": "2026-06-12T09:54:17.789Z",
+    "source": "https://worldcup26.ir"
   }
 }

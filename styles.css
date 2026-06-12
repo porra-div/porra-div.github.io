@@ -259,6 +259,11 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
   gap: 12px;
 }
 
+.prediction-grid.predictions-only {
+  grid-template-columns: minmax(520px, 1fr) minmax(420px, .9fr);
+  align-items: start;
+}
+
 .prediction-card {
   border: 1px solid var(--border);
   border-radius: 8px;
@@ -274,7 +279,7 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
   border-bottom: 1px solid var(--border);
 }
 
-.prediction-card:first-child {
+.prediction-grid:not(.predictions-only) .prediction-card:first-child {
   grid-row: span 3;
 }
 
@@ -307,6 +312,10 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
   background: rgba(255,255,255,.045);
 }
 
+.excel-table tr.status-exact td {
+  background: rgba(46, 160, 67, .30);
+  box-shadow: inset 4px 0 0 var(--yellow);
+}
 .excel-table tr.status-hit td { background: rgba(46, 160, 67, .22); }
 .excel-table tr.status-miss td { background: rgba(198, 16, 46, .28); }
 .excel-table tr.status-pending td { background: rgba(255, 204, 41, .18); color: #fff6d6; }
@@ -324,13 +333,73 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
   min-width: 760px;
 }
 
+.bracket {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(150px, 1fr));
+  gap: 10px;
+  overflow-x: auto;
+  padding: 12px;
+}
+
+.bracket-round {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.bracket-round h4 {
+  margin: 0;
+  color: var(--yellow-soft);
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.bracket-match {
+  position: relative;
+  min-height: 74px;
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255,255,255,.06);
+}
+
+.bracket-match.status-exact {
+  background: rgba(46, 160, 67, .30);
+  border-color: var(--yellow);
+  box-shadow: 0 0 0 2px rgba(255, 204, 41, .18);
+}
+
+.bracket-match.status-hit { background: rgba(46, 160, 67, .22); border-color: rgba(46, 160, 67, .55); }
+.bracket-match.status-miss { background: rgba(198, 16, 46, .28); border-color: rgba(255, 116, 116, .48); }
+.bracket-match.status-pending { background: rgba(255, 204, 41, .18); border-color: rgba(255, 204, 41, .45); }
+
+.bracket-teams {
+  font-weight: 900;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.bracket-score {
+  margin-top: 7px;
+  color: var(--yellow);
+  font-weight: 950;
+  font-size: 13px;
+}
+
+.bracket-state {
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+}
+
 .muted { color: var(--muted); }
 .empty { color: var(--muted); padding: 16px; border: 1px dashed var(--border); border-radius: 8px; }
 
 @media (max-width: 1020px) {
   .hero, .card-header { align-items: flex-start; flex-direction: column; }
   .hero-actions { align-items: flex-start; width: 100%; }
-  .layout, .two-cols, .groups-grid, .prediction-grid { grid-template-columns: 1fr; }
+  .layout, .two-cols, .groups-grid, .prediction-grid, .prediction-grid.predictions-only { grid-template-columns: 1fr; }
   .prediction-card:first-child { grid-row: auto; }
   input, select { width: 100%; }
   h1 { font-size: clamp(44px, 16vw, 76px); }
