@@ -243,6 +243,92 @@ function renderFunFacts() {
   `).join('');
 }
 
+function renderInsights() {
+  renderHistoryChart();
+  renderMedalsRanking();
+}
+
+function renderHistoryChart() {
+  const rows = state.dashboard?.leaderboard || [];
+  const finished = (state.dashboard?.actual?.matches || []).filter((m) => m.finished).map((m) => Number(m.matchNumber)).sort((a, b) => a - b);
+  const matchNumbers = [...new Set(finished)];
+  if (!rows.length || !matchNumbers.length) {
+    $('#historyChart').innerHTML = `<div class="empty">La gráfica aparecerá cuando haya partidos finalizados.</div>`;
+    return;
+  }
+
+  const width = 760;
+  const height = 260;
+  const pad = { top: 18, right: 24, bottom: 34, left: 36 };
+  const maxScore = Math.max(1, ...rows.map((row) => row.total || 0));
+  const colors = ['#ffcc29', '#fff7e8', '#2ea043', '#58a6ff', '#ff7a7a', '#c084fc'];
+  const xFor = (matchNumber) => {
+    const index = Math.max(0, matchNumbers.indexOf(Number(matchNumber)));
+    const denom = Math.max(1, matchNumbers.length - 1);
+    return pad.left + (index / denom) * (width - pad.left - pad.right);
+  };
+  const yFor = (points) => height - pad.bottom - (points / maxScore) * (height - pad.top - pad.bottom);
+
+  const series = rows.map((row, index) => {
+    let acc = 0;
+    const byMatch = new Map((row.timeline || []).map((event) => [Number(event.matchNumber), event.points || 0]));
+    const points = matchNumbers.map((matchNumber) => {
+      acc += byMatch.get(matchNumber) || 0;
+      return `${xFor(matchNumber).toFixed(1)},${yFor(acc).toFixed(1)}`;
+    });
+    return { row, color: colors[index % colors.length], points: points.join(' ') };
+  });
+
+  $('#historyChart').innerHTML = `
+    <svg class="history-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Evolución de puntos">
+      <line x1="${pad.left}" y1="${height - pad.bottom}" x2="${width - pad.right}" y2="${height - pad.bottom}" class="chart-axis"></line>
+      <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${height - pad.bottom}" class="chart-axis"></line>
+      ${[0, .5, 1].map((step) => {
+        const y = yFor(maxScore * step);
+        return `<g><line x1="${pad.left}" y1="${y}" x2="${width - pad.right}" y2="${y}" class="chart-grid"></line><text x="8" y="${y + 4}" class="chart-label">${Math.round(maxScore * step)}</text></g>`;
+      }).join('')}
+      ${series.map((item) => `<polyline points="${item.points}" fill="none" stroke="${item.color}" class="chart-line"></polyline>`).join('')}
+      ${series.map((item) => {
+        const last = item.points.split(' ').at(-1).split(',');
+        return `<circle cx="${last[0]}" cy="${last[1]}" r="4.5" fill="${item.color}"></circle>`;
+      }).join('')}
+    </svg>
+    <div class="chart-legend">
+      ${series.map((item) => `<span><i style="background:${item.color}"></i>${esc(item.row.name)}</span>`).join('')}
+    </div>
+  `;
+}
+
+function renderMedalsRanking() {
+  const rows = [...(state.dashboard?.leaderboard || [])];
+  if (!rows.length) {
+    $('#medalsRanking').innerHTML = `<div class="empty">Sin participantes todavía.</div>`;
+    return;
+  }
+  const exactRows = [...rows].sort((a, b) => b.exactScores - a.exactScores || b.total - a.total || a.name.localeCompare(b.name)).slice(0, 5);
+  const medals = ['🥇', '🥈', '🥉'];
+  $('#medalsRanking').innerHTML = `
+    <div class="podium-strip">
+      ${rows.slice(0, 3).map((row, index) => `
+        <div class="podium-place place-${index + 1}">
+          <span>${medals[index]}</span>
+          <strong>${esc(row.name)}</strong>
+          <small>${row.total} pts</small>
+        </div>
+      `).join('')}
+    </div>
+    <div class="exact-ranking">
+      ${exactRows.map((row, index) => `
+        <div class="exact-row">
+          <span class="rank ${index < 3 ? 'top' : ''}">${index + 1}</span>
+          <strong>${esc(row.name)}</strong>
+          <em>${row.exactScores} exactos</em>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
 function renderLeaderboard() {
   const rows = (state.dashboard?.leaderboard || [])
     .filter((p) => p.name.toLowerCase().includes(filter.toLowerCase()));
@@ -307,10 +393,7 @@ function renderMatches() {
   const matches = state.dashboard?.actual?.matches || [];
   const visible = matches
     .filter((m) => m.homeTeam || m.awayTeam)
-    .sort((a, b) => {
-      if (a.finished !== b.finished) return a.finished ? -1 : 1;
-      return (a.matchNumber || 0) - (b.matchNumber || 0);
-    })
+    .sort(compareMatchesByKickoff)
     .slice(0, 16);
   $('#matchesList').innerHTML = visible.length ? visible.map((m) => `
     <div class="match ${m.finished ? 'finished' : ''}">
@@ -327,6 +410,15 @@ function renderMatches() {
 function matchDateLabel(match) {
   if (match?.kickoff) return fmtDate(match.kickoff);
   return match?.status || 'Fecha por confirmar';
+}
+
+function compareMatchesByKickoff(a, b) {
+  const da = parseDateValue(a?.kickoff)?.getTime();
+  const db = parseDateValue(b?.kickoff)?.getTime();
+  if (Number.isFinite(da) && Number.isFinite(db) && da !== db) return da - db;
+  if (Number.isFinite(da) && !Number.isFinite(db)) return -1;
+  if (!Number.isFinite(da) && Number.isFinite(db)) return 1;
+  return (a?.matchNumber || 0) - (b?.matchNumber || 0);
 }
 
 function stageName(stage) {
@@ -374,7 +466,7 @@ function renderGroups() {
   const rows = groupRows(selectedGroup, groups, matches);
   const groupMatches = matches
     .filter((m) => m.stage === 'group' && m.group === selectedGroup && (m.homeTeam || m.awayTeam))
-    .sort((a, b) => (a.matchNumber || 0) - (b.matchNumber || 0));
+    .sort(compareMatchesByKickoff);
 
   $('#groupsGrid').innerHTML = `
     <article class="group-card featured">
@@ -660,6 +752,7 @@ function render() {
   renderStatus();
   renderAlerts();
   renderFunFacts();
+  renderInsights();
   renderLeaderboard();
   renderParticipantDetails();
   renderMatches();
@@ -683,6 +776,16 @@ function closeGame() {
   $('#gameModal').setAttribute('aria-hidden', 'true');
   if (game.raf) cancelAnimationFrame(game.raf);
   game.raf = null;
+}
+
+function openLobato() {
+  $('#lobatoModal').classList.add('open');
+  $('#lobatoModal').setAttribute('aria-hidden', 'false');
+}
+
+function closeLobato() {
+  $('#lobatoModal').classList.remove('open');
+  $('#lobatoModal').setAttribute('aria-hidden', 'true');
 }
 
 function resetPenaltyBall() {
@@ -736,9 +839,9 @@ function updatePenaltyGame() {
   const goal = goalRect(width, height);
   const keeper = keeperRect(width, height);
   const target = targetRect(width, height);
-  game.keeperT += 0.062 + Math.min(game.streak, 6) * 0.006;
-  game.targetT += 0.045;
-  game.blockerT += 0.055;
+  game.keeperT += 0.046 + Math.min(game.streak, 5) * 0.004;
+  game.targetT += 0.031;
+  game.blockerT += 0.034;
 
   if (!game.flying) return;
 
@@ -968,8 +1071,8 @@ function goalRect(width, height) {
 
 function targetRect(width, height) {
   const goal = goalRect(width, height);
-  const w = goal.w * 0.24;
-  const h = goal.h * 0.42;
+  const w = goal.w * 0.34;
+  const h = goal.h * 0.54;
   return {
     x: goal.x + goal.w * 0.08 + ((Math.sin(game.targetT) + 1) / 2) * (goal.w * 0.84 - w),
     y: goal.y + goal.h * 0.12 + ((Math.cos(game.targetT * 1.35) + 1) / 2) * (goal.h * 0.68 - h),
@@ -980,21 +1083,21 @@ function targetRect(width, height) {
 
 function keeperRect(width, height) {
   const goal = goalRect(width, height);
-  const w = width * 0.13;
-  const h = height * 0.135;
+  const w = width * 0.105;
+  const h = height * 0.12;
   const travel = goal.w - w - width * 0.08;
   const movingX = goal.x + width * 0.04 + ((Math.sin(game.keeperT) + 1) / 2) * travel;
   const chaseX = game.flying ? game.ball.x - w / 2 : movingX;
-  const x = movingX * 0.66 + Math.max(goal.x, Math.min(goal.x + goal.w - w, chaseX)) * 0.34;
+  const x = movingX * 0.78 + Math.max(goal.x, Math.min(goal.x + goal.w - w, chaseX)) * 0.22;
   return { x, y: goal.y + goal.h * 0.48, w, h };
 }
 
 function blockerRects(width, height) {
   const baseY = height * 0.48;
-  const w = width * 0.055;
-  const h = height * 0.12;
-  return [0, 1, 2].map((index) => {
-    const span = width * (0.24 + index * 0.03);
+  const w = width * 0.045;
+  const h = height * 0.095;
+  return [0, 1].map((index) => {
+    const span = width * (0.18 + index * 0.03);
     const center = width * (0.34 + index * 0.16);
     const phase = game.blockerT * (1.1 + index * 0.18) + index * 1.7;
     return {
@@ -1041,7 +1144,7 @@ function shootPenalty() {
   const dy = game.aim.y - game.ball.y;
   const distance = Math.hypot(dx, dy) || 1;
   const powerPenalty = Math.min(1, Math.max(0, (distance - 180) / 420));
-  game.spin = ((Math.random() - 0.5) * 0.045) + ((game.aim.x - game.ball.x) / penaltyCanvasSize().width) * 0.018;
+  game.spin = ((Math.random() - 0.5) * 0.022) + ((game.aim.x - game.ball.x) / penaltyCanvasSize().width) * 0.01;
   game.ball.vx = dx / (45 - powerPenalty * 6);
   game.ball.vy = dy / (45 - powerPenalty * 6);
   game.flying = true;
@@ -1051,6 +1154,11 @@ function shootPenalty() {
 }
 
 $('#refreshBtn').addEventListener('click', forceRefresh);
+$('#openLobatoBtn').addEventListener('click', openLobato);
+$('#closeLobatoBtn').addEventListener('click', closeLobato);
+$('#lobatoModal').addEventListener('click', (ev) => {
+  if (ev.target.id === 'lobatoModal') closeLobato();
+});
 $('#openGameBtn').addEventListener('click', openGame);
 $('#closeGameBtn').addEventListener('click', closeGame);
 $('#gameModal').addEventListener('click', (ev) => {

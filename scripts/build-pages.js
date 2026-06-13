@@ -18,6 +18,8 @@ const STATIC_FILES = [
   'static-engine.js',
   'styles.css'
 ];
+const IMAGE_SOURCE_DIR = path.join(ROOT, 'data/images');
+const IMAGE_PUBLIC_DIR = path.join(PUBLIC_DIR, 'images');
 
 function readSource(relativePath) {
   return fs.readFileSync(path.join(ROOT, relativePath), 'utf8');
@@ -64,6 +66,15 @@ ${Object.entries(modules).map(([id, source]) => `    ${jsString(id)}: function (
   fs.writeFileSync(path.join(PUBLIC_DIR, 'static-engine.js'), bundle);
 }
 
+function copyImagesToPublic() {
+  if (!fs.existsSync(IMAGE_SOURCE_DIR)) return;
+  fs.mkdirSync(IMAGE_PUBLIC_DIR, { recursive: true });
+  for (const file of fs.readdirSync(IMAGE_SOURCE_DIR)) {
+    if (!/\.(png|jpe?g|webp|gif|svg)$/i.test(file)) continue;
+    fs.copyFileSync(path.join(IMAGE_SOURCE_DIR, file), path.join(IMAGE_PUBLIC_DIR, file));
+  }
+}
+
 async function buildStaticData() {
   const { participants, errors } = readParticipants(PREDICTIONS_DIR);
   const manualAwards = safeReadJson(MANUAL_AWARDS_FILE, { goldenBoot: [], goldenBall: [] });
@@ -86,6 +97,7 @@ function copyStaticSiteToDocs() {
   for (const file of STATIC_FILES) {
     fs.copyFileSync(path.join(PUBLIC_DIR, file), path.join(DOCS_DIR, file));
   }
+  if (fs.existsSync(IMAGE_PUBLIC_DIR)) fs.cpSync(IMAGE_PUBLIC_DIR, path.join(DOCS_DIR, 'images'), { recursive: true });
   console.log('Static site copied to docs/ for branch-based GitHub Pages.');
 }
 
@@ -93,11 +105,13 @@ function copyStaticSiteToRoot() {
   for (const file of STATIC_FILES) {
     fs.copyFileSync(path.join(PUBLIC_DIR, file), path.join(ROOT, file));
   }
+  if (fs.existsSync(IMAGE_PUBLIC_DIR)) fs.cpSync(IMAGE_PUBLIC_DIR, path.join(ROOT, 'images'), { recursive: true });
   console.log('Static site copied to repo root for user GitHub Pages.');
 }
 
 async function main() {
   buildBrowserEngine();
+  copyImagesToPublic();
   await buildStaticData();
   copyStaticSiteToDocs();
   copyStaticSiteToRoot();

@@ -925,12 +925,21 @@ function scoreParticipant(participant, apiData, manualAwards = {}) {
   const actual = buildActualFacts(apiData);
   const breakdown = Object.fromEntries(Object.keys(STAGE_LABELS).map((key) => [key, 0]));
   const events = [];
+  const matchTimeline = [];
   let total = 0;
 
   for (const [matchNumberRaw, prediction] of Object.entries(participant.predictions.matches || {})) {
     const matchNumber = Number(matchNumberRaw);
     const actualMatch = findActualMatchForPrediction(prediction, actual);
     const score = scoreMatchPrediction(prediction, actualMatch);
+    if (actualMatch?.finished && prediction?.valid) {
+      matchTimeline.push({
+        matchNumber: actualMatch.matchNumber || matchNumber,
+        label: `${actualMatch.homeTeam || prediction.homeLabel} - ${actualMatch.awayTeam || prediction.awayLabel}`,
+        points: score.points || 0,
+        exact: Boolean(score.exact && score.teamsMatch)
+      });
+    }
     if (score.points) {
       total += score.points;
       breakdown[prediction.stage] += score.points;
@@ -989,6 +998,7 @@ function scoreParticipant(participant, apiData, manualAwards = {}) {
     breakdown,
     exactScores,
     hits: events.length,
+    timeline: matchTimeline.sort((a, b) => a.matchNumber - b.matchNumber),
     events: events.sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 30)
   };
 }

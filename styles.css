@@ -70,6 +70,25 @@ h1 {
 
 .hero-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
 
+.mystery-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 50%;
+  align-self: flex-end;
+  background:
+    radial-gradient(circle at 30% 30%, #fff7cf 0 12%, transparent 13%),
+    linear-gradient(135deg, var(--yellow), #f6a700 54%, #c8102e);
+  color: #320008;
+  font-size: 24px;
+  line-height: 1;
+  box-shadow: 0 12px 28px rgba(0,0,0,.26), inset 0 0 0 2px rgba(255,255,255,.24);
+}
+
+.mystery-button:hover {
+  transform: rotate(-4deg) scale(1.05);
+}
+
 button, input, select {
   font: inherit;
   border: 1px solid var(--border);
@@ -146,6 +165,135 @@ select { min-width: 150px; outline: none; font-weight: 800; }
 .layout { display: grid; grid-template-columns: minmax(0, 1fr) 360px; gap: 12px; margin-top: 12px; }
 .two-cols { grid-template-columns: 1.05fr .95fr; margin-top: 12px; }
 .table-wrap { overflow-x: auto; }
+
+.insights-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(320px, .55fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.chart-card,
+.medals-card {
+  min-height: 330px;
+}
+
+.history-chart {
+  min-height: 252px;
+}
+
+.history-svg {
+  display: block;
+  width: 100%;
+  min-height: 240px;
+  overflow: visible;
+}
+
+.chart-axis {
+  stroke: rgba(255, 226, 138, .45);
+  stroke-width: 2;
+}
+
+.chart-grid {
+  stroke: rgba(255,255,255,.10);
+  stroke-width: 1;
+}
+
+.chart-label {
+  fill: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.chart-line {
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.28));
+}
+
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  margin-top: 8px;
+}
+
+.chart-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.chart-legend i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.podium-strip {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.podium-place {
+  display: grid;
+  gap: 5px;
+  min-height: 106px;
+  align-content: center;
+  justify-items: center;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255,255,255,.07);
+  text-align: center;
+}
+
+.podium-place span {
+  font-size: 28px;
+}
+
+.podium-place strong {
+  color: #fff1c6;
+  font-size: 14px;
+}
+
+.podium-place small {
+  color: var(--muted);
+  font-weight: 850;
+}
+
+.place-1 {
+  background: linear-gradient(180deg, rgba(255, 204, 41, .26), rgba(255,255,255,.07));
+  border-color: rgba(255, 204, 41, .56);
+}
+
+.exact-ranking {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.exact-row {
+  display: grid;
+  grid-template-columns: 34px 1fr auto;
+  align-items: center;
+  gap: 10px;
+  padding: 9px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--panel);
+}
+
+.exact-row em {
+  color: var(--yellow-soft);
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 900;
+}
 
 table { width: 100%; border-collapse: collapse; min-width: 900px; }
 th, td { padding: 11px 10px; border-bottom: 1px solid var(--border); text-align: left; white-space: nowrap; }
@@ -296,6 +444,47 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
   color: #ffe1d8;
   background: rgba(198, 16, 46, .78);
   border-color: rgba(255, 116, 116, .56);
+}
+
+.lobato-modal {
+  background:
+    radial-gradient(circle at 50% 22%, rgba(255, 204, 41, .24), transparent 34%),
+    rgba(12, 0, 4, .86);
+}
+
+.lobato-panel {
+  width: min(560px, 100%);
+  margin-top: min(12vh, 90px);
+  background:
+    linear-gradient(180deg, rgba(255, 204, 41, .16), transparent 160px),
+    #26000a;
+  animation: lobatoPop .22s ease-out;
+}
+
+.lobato-stage {
+  display: grid;
+  place-items: center;
+  min-height: 280px;
+  border: 1px solid rgba(255, 204, 41, .38);
+  border-radius: 8px;
+  background:
+    linear-gradient(135deg, rgba(198, 16, 46, .26), rgba(255, 204, 41, .14)),
+    rgba(255,255,255,.06);
+  overflow: hidden;
+}
+
+.lobato-stage img {
+  width: min(100%, 420px);
+  height: auto;
+  border-radius: 8px;
+  border: 4px solid #fff1c6;
+  box-shadow: 0 22px 48px rgba(0,0,0,.38);
+  transform: rotate(-1.5deg);
+}
+
+@keyframes lobatoPop {
+  from { opacity: 0; transform: translateY(14px) scale(.94); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .prediction-player-list {
@@ -553,8 +742,9 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 @media (max-width: 1020px) {
   .hero, .card-header { align-items: flex-start; flex-direction: column; }
   .hero-actions { align-items: flex-start; width: 100%; }
-  .layout, .two-cols, .groups-grid, .prediction-grid, .prediction-grid.predictions-only { grid-template-columns: 1fr; }
+  .layout, .two-cols, .groups-grid, .prediction-grid, .prediction-grid.predictions-only, .insights-grid { grid-template-columns: 1fr; }
   .prediction-card:first-child { grid-row: auto; }
+  .podium-strip { grid-template-columns: 1fr; }
   input, select { width: 100%; }
   h1 { font-size: clamp(44px, 16vw, 76px); }
 }

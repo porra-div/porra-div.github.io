@@ -13,6 +13,7 @@
         <h1>Mundial 2026</h1>
       </div>
       <div class="hero-actions">
+        <button id="openLobatoBtn" class="mystery-button" type="button" aria-label="Sorpresa">?</button>
         <button id="openGameBtn" type="button">Tirar penalti</button>
         <button id="refreshBtn">Actualizar ahora</button>
         <span id="statusBadge" class="badge">Cargando…</span>
@@ -22,6 +23,26 @@
     <section id="alerts" class="alerts"></section>
 
     <section class="grid kpis" id="funFacts"></section>
+
+    <section class="insights-grid">
+      <article class="card chart-card">
+        <div class="card-header">
+          <div>
+            <h2>Evolución</h2>
+          </div>
+        </div>
+        <div id="historyChart" class="history-chart"></div>
+      </article>
+
+      <article class="card medals-card">
+        <div class="card-header">
+          <div>
+            <h2>Medallas y exactos</h2>
+          </div>
+        </div>
+        <div id="medalsRanking" class="medals-ranking"></div>
+      </article>
+    </section>
 
     <main class="layout">
       <section class="card leaderboard-card">
@@ -121,6 +142,20 @@
       <div class="game-shell">
         <canvas id="penaltyGame" width="960" height="620" aria-label="Minijuego de penaltis"></canvas>
         <div id="gameResult" class="game-result">A puerta</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="lobatoModal" class="modal lobato-modal" aria-hidden="true">
+    <div class="modal-panel lobato-panel" role="dialog" aria-modal="true" aria-labelledby="lobatoTitle">
+      <div class="modal-header">
+        <div>
+          <h2 id="lobatoTitle">A ver qué ha pasado aquí</h2>
+        </div>
+        <button id="closeLobatoBtn" class="icon-button" type="button">Cerrar</button>
+      </div>
+      <div class="lobato-stage">
+        <img src="images/lobato.jpeg" alt="Lobato" loading="lazy">
       </div>
     </div>
   </div>
