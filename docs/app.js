@@ -13,7 +13,6 @@ const game = {
   message: 'A puerta',
   keeperT: 0,
   spin: 0,
-  targetT: 0,
   blockerT: 0,
   ball: { x: 480, y: 540, r: 16, vx: 0, vy: 0 },
   aim: { x: 480, y: 120 },
@@ -237,15 +236,14 @@ function renderFunFacts() {
   $('#funFacts').innerHTML = facts.map((f) => `
     <article class="kpi">
       <div class="kpi-title">${esc(f.title)}</div>
-      <div class="kpi-value">${esc(f.value)}</div>
-      <div class="kpi-meta">${esc(f.meta || '')}</div>
+      <div class="kpi-value">${esc(displayTeamsText(f.value))}</div>
+      <div class="kpi-meta">${esc(displayTeamsText(f.meta || ''))}</div>
     </article>
   `).join('');
 }
 
 function renderInsights() {
   renderHistoryChart();
-  renderMedalsRanking();
 }
 
 function renderHistoryChart() {
@@ -257,9 +255,9 @@ function renderHistoryChart() {
     return;
   }
 
-  const width = 760;
-  const height = 260;
-  const pad = { top: 18, right: 24, bottom: 34, left: 36 };
+  const width = Math.max(900, 140 + matchNumbers.length * 34);
+  const height = 320;
+  const pad = { top: 22, right: 32, bottom: 44, left: 42 };
   const maxScore = Math.max(1, ...rows.map((row) => row.total || 0));
   const colors = ['#ffcc29', '#fff7e8', '#2ea043', '#58a6ff', '#ff7a7a', '#c084fc'];
   const xFor = (matchNumber) => {
@@ -293,38 +291,8 @@ function renderHistoryChart() {
         return `<circle cx="${last[0]}" cy="${last[1]}" r="4.5" fill="${item.color}"></circle>`;
       }).join('')}
     </svg>
-    <div class="chart-legend">
+    <div class="chart-legend" style="grid-template-columns: repeat(${Math.min(series.length, 5)}, minmax(160px, 1fr));">
       ${series.map((item) => `<span><i style="background:${item.color}"></i>${esc(item.row.name)}</span>`).join('')}
-    </div>
-  `;
-}
-
-function renderMedalsRanking() {
-  const rows = [...(state.dashboard?.leaderboard || [])];
-  if (!rows.length) {
-    $('#medalsRanking').innerHTML = `<div class="empty">Sin participantes todavía.</div>`;
-    return;
-  }
-  const exactRows = [...rows].sort((a, b) => b.exactScores - a.exactScores || b.total - a.total || a.name.localeCompare(b.name)).slice(0, 5);
-  const medals = ['🥇', '🥈', '🥉'];
-  $('#medalsRanking').innerHTML = `
-    <div class="podium-strip">
-      ${rows.slice(0, 3).map((row, index) => `
-        <div class="podium-place place-${index + 1}">
-          <span>${medals[index]}</span>
-          <strong>${esc(row.name)}</strong>
-          <small>${row.total} pts</small>
-        </div>
-      `).join('')}
-    </div>
-    <div class="exact-ranking">
-      ${exactRows.map((row, index) => `
-        <div class="exact-row">
-          <span class="rank ${index < 3 ? 'top' : ''}">${index + 1}</span>
-          <strong>${esc(row.name)}</strong>
-          <em>${row.exactScores} exactos</em>
-        </div>
-      `).join('')}
     </div>
   `;
 }
@@ -335,7 +303,7 @@ function renderLeaderboard() {
   if (!selectedParticipantId && rows[0]) selectedParticipantId = rows[0].id;
   const html = rows.map((p) => `
     <tr data-id="${esc(p.id)}" class="${p.id === selectedParticipantId ? 'active' : ''}">
-      <td><span class="rank ${p.rank <= 3 ? 'top' : ''}">${p.rank}</span></td>
+      <td><span class="rank ${p.rank <= 3 ? 'top' : ''}">${rankMedal(p.rank) || p.rank}</span></td>
       <td><strong>${esc(p.name)}</strong></td>
       <td><span class="total">${p.total}</span></td>
       <td>${p.exactScores}</td>
@@ -364,6 +332,10 @@ function renderLeaderboard() {
       openPredictions(btn.dataset.id);
     });
   });
+}
+
+function rankMedal(rank) {
+  return { 1: '🥇', 2: '🥈', 3: '🥉' }[rank] || '';
 }
 
 function renderParticipantDetails() {
@@ -398,7 +370,7 @@ function renderMatches() {
   $('#matchesList').innerHTML = visible.length ? visible.map((m) => `
     <div class="match ${m.finished ? 'finished' : ''}">
       <div>
-        <div class="match-title">${esc(displayTeam(m.homeTeam) || 'TBD')} - ${esc(displayTeam(m.awayTeam) || 'TBD')}</div>
+        <div class="match-title">${esc(displayTeam(m.homeTeam) || 'Por definir')} - ${esc(displayTeam(m.awayTeam) || 'Por definir')}</div>
         <div class="match-meta">#${esc(m.matchNumber)} · ${esc(stageName(m.stage))}${m.group ? ` · Grupo ${esc(m.group)}` : ''}${m.venue ? ` · ${esc(m.venue)}` : ''}</div>
         <div class="match-meta">${esc(matchDateLabel(m))}${m.finished ? ' · Finalizado' : ''}</div>
       </div>
@@ -483,7 +455,7 @@ function renderGroups() {
       <div class="mini-matches">
         ${groupMatches.map((m) => `
           <div class="mini-match ${m.finished ? 'finished' : ''}">
-            <span>${esc(displayTeam(m.homeTeam) || 'TBD')} - ${esc(displayTeam(m.awayTeam) || 'TBD')}</span>
+            <span>${esc(displayTeam(m.homeTeam) || 'Por definir')} - ${esc(displayTeam(m.awayTeam) || 'Por definir')}</span>
             <strong>${m.homeScore ?? '–'}-${m.awayScore ?? '–'}</strong>
           </div>
         `).join('') || `<div class="muted">Pendiente</div>`}
@@ -542,7 +514,7 @@ function renderPredictionsPanel() {
 function predictionMatchesBoard(person) {
   const rows = Object.values(person.predictions?.matches || {})
     .filter((m) => m.valid)
-    .sort((a, b) => a.matchNumber - b.matchNumber);
+    .sort(comparePredictionsByKickoff);
   const stages = [
     ['group', 'Fase de grupos'],
     ['round32', 'Dieciseisavos'],
@@ -597,7 +569,7 @@ function predictionMatchCard(match) {
 function predictionBracket(person) {
   const matches = Object.values(person.predictions?.matches || {})
     .filter((m) => Number(m.matchNumber) >= 73)
-    .sort((a, b) => a.matchNumber - b.matchNumber);
+    .sort(comparePredictionsByKickoff);
   const rounds = [
     ['round32', 'Dieciseisavos'],
     ['round16', 'Octavos'],
@@ -645,7 +617,7 @@ function formatPredictionScoreOnly(match) {
 function bracketLabel(match) {
   if (match.prefix) return displayTeamsText(match.prefix);
   if (match.label) return displayTeamsText(match.label);
-  return `${displayTeam(match.homeLabel) || 'TBD'}-${displayTeam(match.awayLabel) || 'TBD'}`;
+  return `${displayTeam(match.homeLabel) || 'Por definir'}-${displayTeam(match.awayLabel) || 'Por definir'}`;
 }
 
 function actualMatchForPrediction(prediction) {
@@ -659,6 +631,17 @@ function actualMatchForPrediction(prediction) {
     sameTeamName(teams.home, m.homeTeam) &&
     sameTeamName(teams.away, m.awayTeam)
   ) || byNumber;
+}
+
+function comparePredictionsByKickoff(a, b) {
+  const actualA = actualMatchForPrediction(a);
+  const actualB = actualMatchForPrediction(b);
+  const da = parseDateValue(actualA?.kickoff)?.getTime();
+  const db = parseDateValue(actualB?.kickoff)?.getTime();
+  if (Number.isFinite(da) && Number.isFinite(db) && da !== db) return da - db;
+  if (Number.isFinite(da) && !Number.isFinite(db)) return -1;
+  if (!Number.isFinite(da) && Number.isFinite(db)) return 1;
+  return (actualA?.matchNumber || a?.matchNumber || 0) - (actualB?.matchNumber || b?.matchNumber || 0);
 }
 
 function predictedTeams(prediction) {
@@ -838,10 +821,8 @@ function updatePenaltyGame() {
   const { width, height } = penaltyCanvasSize();
   const goal = goalRect(width, height);
   const keeper = keeperRect(width, height);
-  const target = targetRect(width, height);
-  game.keeperT += 0.046 + Math.min(game.streak, 5) * 0.004;
-  game.targetT += 0.031;
-  game.blockerT += 0.034;
+  game.keeperT += 0.078 + Math.min(game.streak, 5) * 0.006;
+  game.blockerT += 0.064;
 
   if (!game.flying) return;
 
@@ -864,10 +845,8 @@ function updatePenaltyGame() {
   }
 
   if (game.ball.y - game.ball.r <= goal.y + goal.h) {
-    if (circleRect(game.ball, target)) {
+    if (game.ball.x > goal.x && game.ball.x < goal.x + goal.w && game.ball.y > goal.y - 18) {
       finishPenalty('Golazo', true);
-    } else if (game.ball.x > goal.x && game.ball.x < goal.x + goal.w && game.ball.y > goal.y - 18) {
-      finishPenalty('Casi', false);
     } else {
       finishPenalty('Fuera', false);
     }
@@ -919,7 +898,6 @@ function drawPenaltyGame() {
   drawCrowd(ctx, width, height);
   drawPitch(ctx, width, height);
   drawGoal(ctx, goal);
-  drawTarget(ctx, targetRect(width, height));
   blockerRects(width, height).forEach((blocker, index) => drawBlocker(ctx, blocker, index));
   drawKeeper(ctx, keeper);
   drawAim(ctx, width, height);
@@ -992,29 +970,6 @@ function drawKeeper(ctx, keeper) {
   ctx.stroke();
 }
 
-function drawTarget(ctx, target) {
-  ctx.fillStyle = 'rgba(255, 204, 41, .26)';
-  ctx.strokeStyle = '#ffcc29';
-  ctx.lineWidth = Math.max(3, target.w * 0.035);
-  ctx.beginPath();
-  roundedRectPath(ctx, target.x, target.y, target.w, target.h, Math.max(6, target.w * 0.08));
-  ctx.fill();
-  ctx.stroke();
-}
-
-function roundedRectPath(ctx, x, y, w, h, r) {
-  const radius = Math.min(r, w / 2, h / 2);
-  ctx.moveTo(x + radius, y);
-  ctx.lineTo(x + w - radius, y);
-  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
-  ctx.lineTo(x + w, y + h - radius);
-  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
-  ctx.lineTo(x + radius, y + h);
-  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
-  ctx.lineTo(x, y + radius);
-  ctx.quadraticCurveTo(x, y, x + radius, y);
-}
-
 function drawBlocker(ctx, blocker, index) {
   ctx.fillStyle = index % 2 ? '#fff7e8' : '#c8102e';
   ctx.fillRect(blocker.x, blocker.y, blocker.w, blocker.h);
@@ -1069,18 +1024,6 @@ function goalRect(width, height) {
   return { x: width * 0.2, y: height * 0.1, w: width * 0.6, h: height * 0.22 };
 }
 
-function targetRect(width, height) {
-  const goal = goalRect(width, height);
-  const w = goal.w * 0.34;
-  const h = goal.h * 0.54;
-  return {
-    x: goal.x + goal.w * 0.08 + ((Math.sin(game.targetT) + 1) / 2) * (goal.w * 0.84 - w),
-    y: goal.y + goal.h * 0.12 + ((Math.cos(game.targetT * 1.35) + 1) / 2) * (goal.h * 0.68 - h),
-    w,
-    h
-  };
-}
-
 function keeperRect(width, height) {
   const goal = goalRect(width, height);
   const w = width * 0.105;
@@ -1099,7 +1042,7 @@ function blockerRects(width, height) {
   return [0, 1].map((index) => {
     const span = width * (0.18 + index * 0.03);
     const center = width * (0.34 + index * 0.16);
-    const phase = game.blockerT * (1.1 + index * 0.18) + index * 1.7;
+    const phase = game.blockerT * (1.28 + index * 0.22) + index * 1.7;
     return {
       x: center + Math.sin(phase) * span - w / 2,
       y: baseY - index * height * 0.065 + Math.cos(phase * 1.4) * height * 0.018,

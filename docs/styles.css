@@ -166,26 +166,18 @@ select { min-width: 150px; outline: none; font-weight: 800; }
 .two-cols { grid-template-columns: 1.05fr .95fr; margin-top: 12px; }
 .table-wrap { overflow-x: auto; }
 
-.insights-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.45fr) minmax(320px, .55fr);
-  gap: 12px;
-  margin-top: 12px;
-}
-
-.chart-card,
-.medals-card {
-  min-height: 330px;
-}
+.chart-card { min-height: 430px; margin-top: 12px; }
 
 .history-chart {
-  min-height: 252px;
+  min-height: 348px;
+  overflow-x: auto;
+  padding-bottom: 4px;
 }
 
 .history-svg {
   display: block;
-  width: 100%;
-  min-height: 240px;
+  width: max(100%, 900px);
+  min-height: 310px;
   overflow: visible;
 }
 
@@ -201,98 +193,39 @@ select { min-width: 150px; outline: none; font-weight: 800; }
 
 .chart-label {
   fill: var(--muted);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 800;
 }
 
 .chart-line {
-  stroke-width: 4;
+  stroke-width: 1.8;
   stroke-linecap: round;
   stroke-linejoin: round;
-  filter: drop-shadow(0 4px 8px rgba(0,0,0,.28));
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,.18));
 }
 
 .chart-legend {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 12px;
-  margin-top: 8px;
+  display: grid;
+  gap: 10px 16px;
+  margin-top: 14px;
+  width: 100%;
 }
 
 .chart-legend span {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 800;
+  gap: 10px;
+  color: #fff1c6;
+  font-size: 18px;
+  font-weight: 900;
+  min-width: 0;
 }
 
 .chart-legend i {
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
-}
-
-.podium-strip {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.podium-place {
-  display: grid;
-  gap: 5px;
-  min-height: 106px;
-  align-content: center;
-  justify-items: center;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: rgba(255,255,255,.07);
-  text-align: center;
-}
-
-.podium-place span {
-  font-size: 28px;
-}
-
-.podium-place strong {
-  color: #fff1c6;
-  font-size: 14px;
-}
-
-.podium-place small {
-  color: var(--muted);
-  font-weight: 850;
-}
-
-.place-1 {
-  background: linear-gradient(180deg, rgba(255, 204, 41, .26), rgba(255,255,255,.07));
-  border-color: rgba(255, 204, 41, .56);
-}
-
-.exact-ranking {
-  display: grid;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.exact-row {
-  display: grid;
-  grid-template-columns: 34px 1fr auto;
-  align-items: center;
-  gap: 10px;
-  padding: 9px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--panel);
-}
-
-.exact-row em {
-  color: var(--yellow-soft);
-  font-style: normal;
-  font-size: 12px;
-  font-weight: 900;
+  flex: 0 0 auto;
 }
 
 table { width: 100%; border-collapse: collapse; min-width: 900px; }
@@ -311,7 +244,12 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
   font-weight: 950;
 }
 
-.rank.top { background: linear-gradient(135deg, var(--yellow), #f6a700); color: #310006; }
+.rank.top {
+  background: rgba(255,255,255,.10);
+  color: #fff1c6;
+  border: 1px solid rgba(255, 204, 41, .42);
+  font-size: 18px;
+}
 .total { font-size: 20px; font-weight: 950; color: var(--yellow); }
 .stage-chip { color: #ffd9b8; }
 
@@ -453,7 +391,7 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 }
 
 .lobato-panel {
-  width: min(560px, 100%);
+  width: min(760px, 100%);
   margin-top: min(12vh, 90px);
   background:
     linear-gradient(180deg, rgba(255, 204, 41, .16), transparent 160px),
@@ -464,7 +402,7 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 .lobato-stage {
   display: grid;
   place-items: center;
-  min-height: 280px;
+  min-height: 430px;
   border: 1px solid rgba(255, 204, 41, .38);
   border-radius: 8px;
   background:
@@ -474,7 +412,7 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 }
 
 .lobato-stage img {
-  width: min(100%, 420px);
+  width: min(100%, 640px);
   height: auto;
   border-radius: 8px;
   border: 4px solid #fff1c6;
@@ -742,9 +680,10 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 @media (max-width: 1020px) {
   .hero, .card-header { align-items: flex-start; flex-direction: column; }
   .hero-actions { align-items: flex-start; width: 100%; }
-  .layout, .two-cols, .groups-grid, .prediction-grid, .prediction-grid.predictions-only, .insights-grid { grid-template-columns: 1fr; }
+  .layout, .two-cols, .groups-grid, .prediction-grid, .prediction-grid.predictions-only { grid-template-columns: 1fr; }
   .prediction-card:first-child { grid-row: auto; }
-  .podium-strip { grid-template-columns: 1fr; }
+  .chart-legend { grid-template-columns: 1fr !important; }
+  .lobato-stage { min-height: 300px; }
   input, select { width: 100%; }
   h1 { font-size: clamp(44px, 16vw, 76px); }
 }
