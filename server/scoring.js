@@ -20,6 +20,33 @@ function buildMatchMap(games) {
   return map;
 }
 
+function predictedTeams(prediction) {
+  return {
+    home: prediction.prefix ? prediction.prefix.split('-')[0] : prediction.homeLabel,
+    away: prediction.prefix ? prediction.prefix.split('-').slice(1).join('-') : prediction.awayLabel
+  };
+}
+
+function matchTeamsPrediction(prediction, actual) {
+  const teams = predictedTeams(prediction);
+  const includesRealTeams = isRealTeam(teams.home) && isRealTeam(teams.away);
+  return !includesRealTeams || (sameTeam(teams.home, actual?.homeTeam) && sameTeam(teams.away, actual?.awayTeam));
+}
+
+function findActualMatchForPrediction(prediction, actual) {
+  const byNumber = actual.matchMap.get(Number(prediction.matchNumber));
+  if (byNumber && matchTeamsPrediction(prediction, byNumber)) return byNumber;
+
+  const teams = predictedTeams(prediction);
+  if (!isRealTeam(teams.home) || !isRealTeam(teams.away)) return byNumber;
+
+  return (actual.games || []).find((match) =>
+    match.stage === prediction.stage &&
+    sameTeam(teams.home, match.homeTeam) &&
+    sameTeam(teams.away, match.awayTeam)
+  ) || byNumber;
+}
+
 function winnerFromMatch(match) {
   if (!match || !match.finished) return '';
   if (match.winnerTeam) return canonicalTeamName(match.winnerTeam);
@@ -64,10 +91,7 @@ function scoreMatchPrediction(prediction, actual) {
   const diff = goalDiff(prediction.homeGoals, prediction.awayGoals) === goalDiff(actual.homeScore, actual.awayScore);
 
   // Evita dar puntos de marcador en eliminatorias si la predicción incluye equipos reales distintos del partido real.
-  const predictedHome = prediction.prefix ? prediction.prefix.split('-')[0] : prediction.homeLabel;
-  const predictedAway = prediction.prefix ? prediction.prefix.split('-').slice(1).join('-') : prediction.awayLabel;
-  const includesRealTeams = isRealTeam(predictedHome) && isRealTeam(predictedAway);
-  const teamsMatch = !includesRealTeams || (sameTeam(predictedHome, actual.homeTeam) && sameTeam(predictedAway, actual.awayTeam));
+  const teamsMatch = matchTeamsPrediction(prediction, actual);
 
   let points = 0;
   if (exact && teamsMatch) {
@@ -204,6 +228,7 @@ function buildActualFacts(apiData) {
   const completedByGroup = computed.completedByGroup || {};
 
   const actual = {
+    games,
     matchMap,
     groups,
     completedByGroup,
@@ -313,7 +338,7 @@ function scoreParticipant(participant, apiData, manualAwards = {}) {
 
   for (const [matchNumberRaw, prediction] of Object.entries(participant.predictions.matches || {})) {
     const matchNumber = Number(matchNumberRaw);
-    const actualMatch = actual.matchMap.get(matchNumber);
+    const actualMatch = findActualMatchForPrediction(prediction, actual);
     const score = scoreMatchPrediction(prediction, actualMatch);
     if (score.points) {
       total += score.points;
@@ -321,7 +346,7 @@ function scoreParticipant(participant, apiData, manualAwards = {}) {
       events.push({
         type: 'match',
         stage: prediction.stage,
-        matchNumber,
+        matchNumber: actualMatch?.matchNumber || matchNumber,
         label: `${actualMatch?.homeTeam || prediction.homeLabel} - ${actualMatch?.awayTeam || prediction.awayLabel}`,
         prediction: prediction.valid ? `${prediction.homeGoals}-${prediction.awayGoals}` : prediction.raw,
         actual: actualMatch?.finished ? `${actualMatch.homeScore}-${actualMatch.awayScore}` : '',

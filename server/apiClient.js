@@ -109,14 +109,46 @@ function isFinishedStatus(statusRaw) {
   return /(finished|full time|fulltime|ft|played|complete|completed|ended|finalizado|terminado|after extra|aet|penalties|penalty)/.test(status);
 }
 
+const STADIUM_UTC_OFFSETS = {
+  // Mexico does not use DST in these host cities; World Cup 2026 is in June.
+  1: -6, 2: -6, 3: -6,
+  // US Central daylight time.
+  4: -5, 5: -5, 6: -5,
+  // US/Canada Eastern daylight time.
+  7: -4, 8: -4, 9: -4, 10: -4, 11: -4, 12: -4,
+  // US/Canada Pacific daylight time.
+  13: -7, 14: -7, 15: -7, 16: -7
+};
+
+function parseVenueLocalKickoff(value, stadiumId) {
+  const raw = toText(value);
+  const match = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s+(\d{1,2}):(\d{2})$/);
+  const offset = STADIUM_UTC_OFFSETS[Number(stadiumId)];
+  if (!match || offset === undefined) return raw;
+  const [, month, day, year, hour, minute] = match;
+  return new Date(Date.UTC(
+    Number(year),
+    Number(month) - 1,
+    Number(day),
+    Number(hour) - offset,
+    Number(minute)
+  )).toISOString();
+}
+
+function getKickoff(game) {
+  const local = readPath(game, ['local_date', 'localDate']);
+  if (local) return parseVenueLocalKickoff(local, readPath(game, ['stadium_id', 'stadiumId', 'stadium.id']));
+  return toText(readPath(game, ['date', 'datetime', 'startTime', 'start_time', 'kickoff', 'utcDate']) || '');
+}
+
 function normalizeGames(raw) {
   const arr = findFirstArray(raw, ['games', 'matches', 'fixtures', 'data']);
   const sorted = [...arr].sort((a, b) => {
     const na = asNumber(readPath(a, ['matchNumber', 'match_number', 'number', 'gameNumber', 'game_number', 'id']));
     const nb = asNumber(readPath(b, ['matchNumber', 'match_number', 'number', 'gameNumber', 'game_number', 'id']));
     if (na !== null && nb !== null) return na - nb;
-    const da = Date.parse(readPath(a, ['local_date', 'localDate', 'date', 'datetime', 'startTime', 'start_time', 'kickoff', 'utcDate']) || '');
-    const db = Date.parse(readPath(b, ['local_date', 'localDate', 'date', 'datetime', 'startTime', 'start_time', 'kickoff', 'utcDate']) || '');
+    const da = Date.parse(getKickoff(a) || '');
+    const db = Date.parse(getKickoff(b) || '');
     if (Number.isFinite(da) && Number.isFinite(db)) return da - db;
     return 0;
   });
@@ -141,7 +173,7 @@ function normalizeGames(raw) {
       winnerTeam: normalizeTeamObject(readPath(game, ['winner.name', 'winner', 'winnerTeam.name', 'winner_team.name', 'winnerTeam', 'winner_team'])),
       loserTeam: normalizeTeamObject(readPath(game, ['loser.name', 'loser', 'loserTeam.name', 'loser_team.name', 'loserTeam', 'loser_team'])),
       venue: toText(readPath(game, ['venue.name', 'stadium.name', 'stadium', 'venue', 'location']) || ''),
-      kickoff: toText(readPath(game, ['local_date', 'localDate', 'date', 'datetime', 'startTime', 'start_time', 'kickoff', 'utcDate']) || ''),
+      kickoff: getKickoff(game),
       title: toText(readPath(game, ['name', 'title']) || '')
     };
   });

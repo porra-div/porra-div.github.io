@@ -26,6 +26,56 @@ const STATIC_DATA_URL = 'static-data.json';
 const WORLD_CUP_API_BASE = 'https://worldcup26.ir';
 let staticData = null;
 let staticMode = false;
+const TEAM_ES = {
+  Mexico: 'México',
+  'South Africa': 'Sudáfrica',
+  'South Korea': 'Corea del Sur',
+  'Czech Republic': 'República Checa',
+  Canada: 'Canadá',
+  'Bosnia and Herzegovina': 'Bosnia y Herzegovina',
+  Qatar: 'Catar',
+  Switzerland: 'Suiza',
+  Brazil: 'Brasil',
+  Morocco: 'Marruecos',
+  Haiti: 'Haití',
+  Scotland: 'Escocia',
+  USA: 'Estados Unidos',
+  Paraguay: 'Paraguay',
+  Australia: 'Australia',
+  Turkey: 'Turquía',
+  Germany: 'Alemania',
+  Curacao: 'Curazao',
+  'Ivory Coast': 'Costa de Marfil',
+  Ecuador: 'Ecuador',
+  Netherlands: 'Países Bajos',
+  Japan: 'Japón',
+  Sweden: 'Suecia',
+  Tunisia: 'Túnez',
+  Belgium: 'Bélgica',
+  Egypt: 'Egipto',
+  Iran: 'Irán',
+  'New Zealand': 'Nueva Zelanda',
+  Spain: 'España',
+  'Cape Verde': 'Cabo Verde',
+  'Saudi Arabia': 'Arabia Saudita',
+  Uruguay: 'Uruguay',
+  France: 'Francia',
+  Senegal: 'Senegal',
+  Iraq: 'Irak',
+  Norway: 'Noruega',
+  Argentina: 'Argentina',
+  Algeria: 'Argelia',
+  Austria: 'Austria',
+  Jordan: 'Jordania',
+  Portugal: 'Portugal',
+  'DR Congo': 'RD Congo',
+  Uzbekistan: 'Uzbekistán',
+  Colombia: 'Colombia',
+  England: 'Inglaterra',
+  Croatia: 'Croacia',
+  Ghana: 'Ghana',
+  Panama: 'Panamá'
+};
 
 function parseDateValue(value) {
   if (!value) return null;
@@ -42,8 +92,27 @@ function parseDateValue(value) {
 
 const fmtDate = (value) => {
   const parsed = parseDateValue(value);
-  return parsed ? parsed.toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short' }) : '—';
+  return parsed ? parsed.toLocaleString('es-ES', { dateStyle: 'short', timeStyle: 'short', timeZone: 'Europe/Madrid' }) : '—';
 };
+
+function displayTeam(value) {
+  const raw = String(value || '');
+  const medal = raw.match(/^[🥇🥈🥉]\s*/u)?.[0] || '';
+  const clean = raw.replace(/^[🥇🥈🥉]\s*/u, '');
+  return `${medal}${TEAM_ES[clean] || clean}`;
+}
+
+function displayTeamsText(value) {
+  let text = String(value || '');
+  for (const [english, spanish] of Object.entries(TEAM_ES).sort((a, b) => b[0].length - a[0].length)) {
+    text = text.replace(new RegExp(`\\b${escapeRegExp(english)}\\b`, 'g'), spanish);
+  }
+  return text;
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 async function loadDashboard() {
   try {
@@ -223,9 +292,9 @@ function renderParticipantDetails() {
   const predictionButton = `<button class="small-button wide prediction-open-detail" data-id="${esc(person.id)}" type="button">Ver predicciones</button>`;
   $('#participantDetails').innerHTML = predictionButton + (events.length ? events.map((e) => `
     <div class="detail-event">
-      <strong>${esc(e.label || e.type)} <span class="points-pill">+${e.points}</span></strong>
-      <div class="detail-meta">Predicción: ${esc(e.prediction || '')}${e.actual ? ` · Real: ${esc(e.actual)}` : ''}</div>
-      ${e.details ? `<div class="detail-meta">${esc(e.details)}</div>` : ''}
+      <strong>${esc(displayTeamsText(e.label || e.type))} <span class="points-pill">+${e.points}</span></strong>
+      <div class="detail-meta">Predicción: ${esc(displayTeamsText(e.prediction || ''))}${e.actual ? ` · Real: ${esc(displayTeamsText(e.actual))}` : ''}</div>
+      ${e.details ? `<div class="detail-meta">${esc(displayTeamsText(e.details))}</div>` : ''}
     </div>
   `).join('') : `<div class="empty">Todavía no tiene aciertos computados.</div>`);
   document.querySelector('.prediction-open-detail')?.addEventListener('click', (ev) => {
@@ -246,7 +315,7 @@ function renderMatches() {
   $('#matchesList').innerHTML = visible.length ? visible.map((m) => `
     <div class="match ${m.finished ? 'finished' : ''}">
       <div>
-        <div class="match-title">${esc(m.homeTeam || 'TBD')} - ${esc(m.awayTeam || 'TBD')}</div>
+        <div class="match-title">${esc(displayTeam(m.homeTeam) || 'TBD')} - ${esc(displayTeam(m.awayTeam) || 'TBD')}</div>
         <div class="match-meta">#${esc(m.matchNumber)} · ${esc(stageName(m.stage))}${m.group ? ` · Grupo ${esc(m.group)}` : ''}${m.venue ? ` · ${esc(m.venue)}` : ''}</div>
         <div class="match-meta">${esc(matchDateLabel(m))}${m.finished ? ' · Finalizado' : ''}</div>
       </div>
@@ -284,7 +353,7 @@ function renderQualified() {
 }
 
 function teamTags(teams) {
-  return teams?.length ? `<div class="team-tags">${teams.map((t) => `<span class="team-tag">${esc(t)}</span>`).join('')}</div>` : `<div class="muted">Pendiente</div>`;
+  return teams?.length ? `<div class="team-tags">${teams.map((t) => `<span class="team-tag">${esc(displayTeam(t))}</span>`).join('')}</div>` : `<div class="muted">Pendiente</div>`;
 }
 
 function renderGroups() {
@@ -313,7 +382,7 @@ function renderGroups() {
       <div class="group-row muted"><span>#</span><span>Equipo</span><span>Pts</span><span>DG</span></div>
       ${rows.map((t, i) => `
         <div class="group-row">
-          <span>${t.position || i + 1}</span><span>${esc(t.team)}</span><span>${t.points ?? 0}</span><span>${t.goalDifference ?? 0}</span>
+          <span>${t.position || i + 1}</span><span>${esc(displayTeam(t.team))}</span><span>${t.points ?? 0}</span><span>${t.goalDifference ?? 0}</span>
         </div>
       `).join('')}
     </article>
@@ -322,7 +391,7 @@ function renderGroups() {
       <div class="mini-matches">
         ${groupMatches.map((m) => `
           <div class="mini-match ${m.finished ? 'finished' : ''}">
-            <span>${esc(m.homeTeam || 'TBD')} - ${esc(m.awayTeam || 'TBD')}</span>
+            <span>${esc(displayTeam(m.homeTeam) || 'TBD')} - ${esc(displayTeam(m.awayTeam) || 'TBD')}</span>
             <strong>${m.homeScore ?? '–'}-${m.awayScore ?? '–'}</strong>
           </div>
         `).join('') || `<div class="muted">Pendiente</div>`}
@@ -414,10 +483,10 @@ function predictionMatchCard(match) {
   return `
     <article class="prediction-match-card ${status.className}">
       <div class="prediction-match-top">
-        <span>#${match.matchNumber}</span>
+        <span>#${status.matchNumber || match.matchNumber}</span>
         <span class="status-pill">${esc(status.label)}</span>
       </div>
-      <div class="prediction-match-title">${esc(match.label || `${match.homeLabel || ''}-${match.awayLabel || ''}`)}</div>
+      <div class="prediction-match-title">${esc(displayTeamsText(match.label || `${match.homeLabel || ''}-${match.awayLabel || ''}`))}</div>
       <div class="prediction-match-date">${esc(predictionDateText(match))}</div>
       <div class="prediction-score-row">
         <div>
@@ -482,13 +551,42 @@ function formatPredictionScoreOnly(match) {
 }
 
 function bracketLabel(match) {
-  if (match.prefix) return match.prefix;
-  if (match.label) return match.label;
-  return `${match.homeLabel || 'TBD'}-${match.awayLabel || 'TBD'}`;
+  if (match.prefix) return displayTeamsText(match.prefix);
+  if (match.label) return displayTeamsText(match.label);
+  return `${displayTeam(match.homeLabel) || 'TBD'}-${displayTeam(match.awayLabel) || 'TBD'}`;
 }
 
 function actualMatchForPrediction(prediction) {
-  return (state.dashboard?.actual?.matches || []).find((m) => Number(m.matchNumber) === Number(prediction.matchNumber));
+  const matches = state.dashboard?.actual?.matches || [];
+  const byNumber = matches.find((m) => Number(m.matchNumber) === Number(prediction.matchNumber));
+  if (byNumber && matchTeamsPrediction(prediction, byNumber)) return byNumber;
+  const teams = predictedTeams(prediction);
+  if (!teams.home || !teams.away) return byNumber;
+  return matches.find((m) =>
+    m.stage === prediction.stage &&
+    sameTeamName(teams.home, m.homeTeam) &&
+    sameTeamName(teams.away, m.awayTeam)
+  ) || byNumber;
+}
+
+function predictedTeams(prediction) {
+  if (!prediction) return { home: '', away: '' };
+  if (prediction.prefix) {
+    const parts = prediction.prefix.split('-');
+    return { home: parts[0] || '', away: parts.slice(1).join('-') || '' };
+  }
+  return { home: prediction.homeLabel || '', away: prediction.awayLabel || '' };
+}
+
+function matchTeamsPrediction(prediction, actual) {
+  const teams = predictedTeams(prediction);
+  return sameTeamName(teams.home, actual?.homeTeam) && sameTeamName(teams.away, actual?.awayTeam);
+}
+
+function sameTeamName(a, b) {
+  const left = normalizeText(TEAM_ES[a] || a);
+  const right = normalizeText(TEAM_ES[b] || b);
+  return Boolean(left && right && left === right);
 }
 
 function predictionDateText(prediction) {
@@ -499,14 +597,15 @@ function predictionDateText(prediction) {
 function matchPredictionStatus(prediction) {
   const actual = actualMatchForPrediction(prediction);
   if (!prediction?.valid || !actual?.finished) {
-    return { className: 'status-pending', label: 'Pendiente', actualText: actual ? `${actual.homeScore ?? '-'}-${actual.awayScore ?? '-'}` : '' };
+    return { className: 'status-pending', label: 'Pendiente', actualText: actual ? `${actual.homeScore ?? '-'}-${actual.awayScore ?? '-'}` : '', matchNumber: actual?.matchNumber };
   }
   const exact = Number(prediction.homeGoals) === Number(actual.homeScore) && Number(prediction.awayGoals) === Number(actual.awayScore);
   const sign = scoreSign(prediction.homeGoals, prediction.awayGoals) === scoreSign(actual.homeScore, actual.awayScore);
   return {
     className: exact ? 'status-exact' : (sign ? 'status-hit' : 'status-miss'),
     label: exact ? 'Resultado exacto' : (sign ? 'Ganador/empate' : 'Fallado'),
-    actualText: `${actual.homeScore}-${actual.awayScore}`
+    actualText: `${actual.homeScore}-${actual.awayScore}`,
+    matchNumber: actual.matchNumber
   };
 }
 
