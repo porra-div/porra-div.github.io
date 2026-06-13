@@ -139,9 +139,10 @@ function computeGroupStandings(games) {
   }
 
   for (const match of games || []) {
-    if (match.stage !== 'group' || !match.group || !match.finished) continue;
+    if (match.stage !== 'group' || !match.group) continue;
     const home = ensure(match.group, match.homeTeam);
     const away = ensure(match.group, match.awayTeam);
+    if (!match.finished) continue;
     const h = asNumber(match.homeScore);
     const a = asNumber(match.awayScore);
     if (!home || !away || h === null || a === null) continue;

@@ -716,15 +716,17 @@ function groupLetters(groups, matches) {
 
 function groupRows(group, groups, matches) {
   const table = groups?.[group] || [];
-  if (table.length) return table;
-
-  const teams = [];
+  const teams = table.map((row, index) => ({ ...row, position: row.position || index + 1 }));
   const seen = new Set();
+  for (const row of teams) {
+    if (row.team) seen.add(normalizeText(row.team));
+  }
   for (const match of matches || []) {
     if (match.stage !== 'group' || match.group !== group) continue;
     for (const team of [match.homeTeam, match.awayTeam]) {
-      if (!team || seen.has(team)) continue;
-      seen.add(team);
+      const key = normalizeText(team);
+      if (!team || seen.has(key)) continue;
+      seen.add(key);
       teams.push({ team, position: teams.length + 1, points: 0, goalDifference: 0 });
     }
   }
