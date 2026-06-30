@@ -323,7 +323,7 @@ function renderLeaderboard() {
   const html = rows.map((p) => `
     <tr data-id="${esc(p.id)}" class="${p.id === selectedParticipantId ? 'active' : ''}">
       <td><span class="rank ${p.rank <= 3 ? 'top' : ''}">${rankMedal(p.rank) || p.rank}</span></td>
-      <td><strong>${esc(p.name)}</strong><span class="mobile-score"><b>${p.total}</b><small>${p.exactScores} exactos</small></span></td>
+      <td><strong>${esc(p.name)}</strong></td>
       <td><span class="total">${p.total}</span></td>
       <td>${p.exactScores}</td>
       <td><span class="stage-chip">${leaderboardCategoryScore(p, 'groupMatches')}</span></td>
@@ -405,9 +405,10 @@ function renderParticipantDetails() {
   }
   $('#detailSubtitle').textContent = `${person.name} · ${person.total} puntos · ${person.exactScores} exactos`;
   const events = person.events || [];
-  const predictionButton = `<button class="small-button wide prediction-open-detail" data-id="${esc(person.id)}" type="button">Ver predicciones</button>`;
+  const predictionButton = `<a class="prediction-open-detail" href="#" role="button" data-id="${esc(person.id)}">Ver predicciones</a>`;
   $('#participantDetails').innerHTML = predictionButton + (events.length ? groupedDetailEvents(events) : `<div class="empty">Todavía no tiene aciertos computados.</div>`);
   document.querySelector('.prediction-open-detail')?.addEventListener('click', (ev) => {
+    ev.preventDefault();
     ev.stopPropagation();
     openPredictions(ev.currentTarget.dataset.id);
   });
