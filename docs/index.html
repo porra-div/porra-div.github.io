@@ -12,12 +12,16 @@
       <div>
         <h1>Mundial 2026</h1>
       </div>
+      <div class="hero-cheer-action">
+        <button id="cheerSpainBtn" class="spain-button" type="button">Vamos España</button>
+      </div>
       <div class="hero-actions">
         <button id="openLobatoBtn" class="mystery-button" type="button" aria-label="Sorpresa">?</button>
         <button id="openGameBtn" type="button">Tirar penalti</button>
         <button id="refreshBtn">Actualizar ahora</button>
         <span id="statusBadge" class="badge">Cargando…</span>
       </div>
+      <div id="spainCheer" class="spain-cheer" aria-live="polite">¡Vamos España!</div>
     </header>
 
     <section id="alerts" class="alerts"></section>
@@ -30,7 +34,7 @@
           <div>
             <h2>Clasificación</h2>
           </div>
-          <input id="searchInput" type="search" placeholder="Buscar participante…">
+          <input id="searchInput" type="search" placeholder="Buscar participante…" aria-label="Buscar participante">
         </div>
         <div class="table-wrap">
           <table id="leaderboardTable">
@@ -40,19 +44,21 @@
                 <th>Participante</th>
                 <th>Total</th>
                 <th>Exactos</th>
-                <th>Grupos</th>
+                <th>Part. grupos</th>
+                <th>Pos. grupos</th>
                 <th>1/16</th>
                 <th>1/8</th>
                 <th>1/4</th>
                 <th>Semis</th>
+                <th>Final</th>
                 <th>Honor</th>
                 <th>Premios</th>
-                <th></th>
               </tr>
             </thead>
             <tbody></tbody>
           </table>
         </div>
+        <div id="phaseMaxPoints" class="phase-max-menu" aria-label="Máximos de puntos por fase"></div>
       </section>
 
       <aside class="card details-card">
@@ -66,6 +72,40 @@
       </aside>
     </main>
 
+    <section class="card scoring-card">
+      <div class="card-header">
+        <div>
+          <h2>Reglamento de puntuación</h2>
+        </div>
+      </div>
+      <div class="scoring-grid">
+        <article class="scoring-step">
+          <span>Fase de grupos</span>
+          <strong>+1 / +2</strong>
+          <p><b>Signo 1X2:</b> +1</p>
+          <p><b>Resultado exacto:</b> +2</p>
+          <p><b>Posición en grupo:</b> +1</p>
+        </article>
+        <article class="scoring-step">
+          <span>Pases de ronda</span>
+          <strong>+1</strong>
+          <p>Por cada selección acertada que avanza a dieciseisavos, octavos, cuartos, semifinales o final.</p>
+        </article>
+        <article class="scoring-step">
+          <span>Eliminatorias</span>
+          <strong>+2</strong>
+          <p>En los partidos del cuadro, el marcador exacto suma +2.</p>
+        </article>
+        <article class="scoring-step">
+          <span>Honor y premios</span>
+          <strong>+4 / +2</strong>
+          <p><b>Campeón:</b> +4</p>
+          <p><b>Subcampeón:</b> +1</p>
+          <p><b>Bota/Balón de Oro:</b> +2</p>
+        </article>
+      </div>
+    </section>
+
     <section class="card chart-card">
       <div class="card-header">
         <div>
@@ -73,6 +113,15 @@
         </div>
       </div>
       <div id="historyChart" class="history-chart"></div>
+    </section>
+
+    <section class="card playoff-card">
+      <div class="card-header">
+        <div>
+          <h2>Cuadro de eliminatorias</h2>
+        </div>
+      </div>
+      <div id="playoffBracket" class="playoff-bracket"></div>
     </section>
 
     <section class="grid two-cols">

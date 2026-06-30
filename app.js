@@ -247,15 +247,19 @@ function renderInsights() {
 }
 
 function renderHistoryChart() {
+  const chart = $('#historyChart');
   const rows = state.dashboard?.leaderboard || [];
-  const finished = (state.dashboard?.actual?.matches || []).filter((m) => m.finished).map((m) => Number(m.matchNumber)).sort((a, b) => a - b);
-  const matchNumbers = [...new Set(finished)];
+  const finishedMatches = (state.dashboard?.actual?.matches || [])
+    .filter((match) => match.finished)
+    .sort(compareMatchesByKickoff);
+  const matchNumbers = [...new Set(finishedMatches.map((match) => Number(match.matchNumber)))];
+  const matchByNumber = new Map(finishedMatches.map((match) => [Number(match.matchNumber), match]));
   if (!rows.length || !matchNumbers.length) {
-    $('#historyChart').innerHTML = `<div class="empty">La gráfica aparecerá cuando haya partidos finalizados.</div>`;
+    chart.innerHTML = `<div class="empty">La gráfica aparecerá cuando haya partidos finalizados.</div>`;
     return;
   }
 
-  const width = Math.max(900, 140 + matchNumbers.length * 34);
+  const width = Math.max(620, Math.round(chart.getBoundingClientRect().width || 900));
   const height = 320;
   const pad = { top: 22, right: 32, bottom: 44, left: 42 };
   const maxScore = Math.max(1, ...rows.map((row) => row.total || 0));
@@ -266,24 +270,34 @@ function renderHistoryChart() {
     return pad.left + (index / denom) * (width - pad.left - pad.right);
   };
   const yFor = (points) => height - pad.bottom - (points / maxScore) * (height - pad.top - pad.bottom);
+  const tickEvery = Math.max(1, Math.ceil(matchNumbers.length / 6));
 
   const series = rows.map((row, index) => {
     let acc = 0;
-    const byMatch = new Map((row.timeline || []).map((event) => [Number(event.matchNumber), event.points || 0]));
-    const points = matchNumbers.map((matchNumber) => {
+    const byMatch = new Map();
+    for (const event of row.timeline || []) {
+      const matchNumber = Number(event.matchNumber);
+      byMatch.set(matchNumber, (byMatch.get(matchNumber) || 0) + (event.points || 0));
+    }
+    const points = matchNumbers.map((matchNumber, pointIndex) => {
       acc += byMatch.get(matchNumber) || 0;
+      if (pointIndex === matchNumbers.length - 1) acc = row.total || acc;
       return `${xFor(matchNumber).toFixed(1)},${yFor(acc).toFixed(1)}`;
     });
-    return { row, color: colors[index % colors.length], points: points.join(' ') };
+    return { row, color: colors[index % colors.length], points: points.join(' '), finalScore: row.total || acc };
   });
 
-  $('#historyChart').innerHTML = `
-    <svg class="history-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Evolución de puntos">
+  chart.innerHTML = `
+    <svg class="history-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Evolución de puntos por partido">
       <line x1="${pad.left}" y1="${height - pad.bottom}" x2="${width - pad.right}" y2="${height - pad.bottom}" class="chart-axis"></line>
       <line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${height - pad.bottom}" class="chart-axis"></line>
       ${[0, .5, 1].map((step) => {
         const y = yFor(maxScore * step);
         return `<g><line x1="${pad.left}" y1="${y}" x2="${width - pad.right}" y2="${y}" class="chart-grid"></line><text x="8" y="${y + 4}" class="chart-label">${Math.round(maxScore * step)}</text></g>`;
+      }).join('')}
+      ${matchNumbers.map((matchNumber, index) => {
+        if (index % tickEvery !== 0 && index !== matchNumbers.length - 1) return '';
+        return `<text x="${xFor(matchNumber)}" y="${height - 12}" text-anchor="middle" class="chart-label chart-date">${esc(shortMatchDate(matchByNumber.get(matchNumber)?.kickoff))}</text>`;
       }).join('')}
       ${series.map((item) => `<polyline points="${item.points}" fill="none" stroke="${item.color}" class="chart-line"></polyline>`).join('')}
       ${series.map((item) => {
@@ -292,9 +306,14 @@ function renderHistoryChart() {
       }).join('')}
     </svg>
     <div class="chart-legend" style="grid-template-columns: repeat(${Math.min(series.length, 5)}, minmax(160px, 1fr));">
-      ${series.map((item) => `<span><i style="background:${item.color}"></i>${esc(item.row.name)}</span>`).join('')}
+      ${series.map((item) => `<span><i style="background:${item.color}"></i>${esc(item.row.name)} <strong>${item.finalScore}</strong></span>`).join('')}
     </div>
   `;
+}
+
+function shortMatchDate(value) {
+  const parsed = parseDateValue(value);
+  return parsed ? parsed.toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', timeZone: 'Europe/Madrid' }) : '';
 }
 
 function renderLeaderboard() {
@@ -307,17 +326,18 @@ function renderLeaderboard() {
       <td><strong>${esc(p.name)}</strong></td>
       <td><span class="total">${p.total}</span></td>
       <td>${p.exactScores}</td>
-      <td><span class="stage-chip">${p.breakdown.group || 0}</span></td>
-      <td><span class="stage-chip">${p.breakdown.round32 || 0}</span></td>
-      <td><span class="stage-chip">${p.breakdown.round16 || 0}</span></td>
-      <td><span class="stage-chip">${p.breakdown.quarter || 0}</span></td>
-      <td><span class="stage-chip">${p.breakdown.semi || 0}</span></td>
-      <td><span class="stage-chip">${p.breakdown.honor || 0}</span></td>
-      <td><span class="stage-chip">${p.breakdown.awards || 0}</span></td>
-      <td><button class="small-button prediction-open" data-id="${esc(p.id)}" type="button">Predicciones</button></td>
+      <td><span class="stage-chip">${leaderboardCategoryScore(p, 'groupMatches')}</span></td>
+      <td><span class="stage-chip">${leaderboardCategoryScore(p, 'groupPositions')}</span></td>
+      <td><span class="stage-chip">${leaderboardCategoryScore(p, 'match:round32')}</span></td>
+      <td><span class="stage-chip">${leaderboardCategoryScore(p, 'match:round16')}</span></td>
+      <td><span class="stage-chip">${leaderboardCategoryScore(p, 'match:quarter')}</span></td>
+      <td><span class="stage-chip">${leaderboardCategoryScore(p, 'match:semi')}</span></td>
+      <td><span class="stage-chip">${leaderboardCategoryScore(p, 'match:final')}</span></td>
+      <td><span class="stage-chip">${leaderboardCategoryScore(p, 'honor')}</span></td>
+      <td><span class="stage-chip">${leaderboardCategoryScore(p, 'awards')}</span></td>
     </tr>
   `).join('');
-  $('#leaderboardTable tbody').innerHTML = html || `<tr><td colspan="12" class="empty">No hay participantes que coincidan con la búsqueda.</td></tr>`;
+  $('#leaderboardTable tbody').innerHTML = html || `<tr><td colspan="13" class="empty">No hay participantes que coincidan con la búsqueda.</td></tr>`;
   document.querySelectorAll('#leaderboardTable tbody tr[data-id]').forEach((row) => {
     row.addEventListener('click', () => {
       selectedParticipantId = row.dataset.id;
@@ -326,16 +346,54 @@ function renderLeaderboard() {
       renderParticipantDetails();
     });
   });
-  document.querySelectorAll('.prediction-open').forEach((btn) => {
-    btn.addEventListener('click', (ev) => {
-      ev.stopPropagation();
-      openPredictions(btn.dataset.id);
-    });
-  });
+  renderPhaseMaxPoints();
 }
 
 function rankMedal(rank) {
   return { 1: '🥇', 2: '🥈', 3: '🥉' }[rank] || '';
+}
+
+function leaderboardCategoryScore(player, key) {
+  return (player.events || [])
+    .filter((event) => detailGroupKey(event) === key)
+    .reduce((sum, event) => sum + (event.points || 0), 0);
+}
+
+function renderPhaseMaxPoints() {
+  const points = state.dashboard?.points;
+  if (!points) {
+    $('#phaseMaxPoints').innerHTML = '';
+    return;
+  }
+  const maxExact = (stage) => Math.max(points.match?.[stage]?.exact || 0, points.match?.[stage]?.sign || 0);
+  const awardMax = ['goldenBoot', 'goldenBall'].reduce((sum, key) => {
+    const award = points[key] || {};
+    return sum + Object.values(award).reduce((inner, value) => inner + (value || 0), 0);
+  }, 0);
+  const honorMax = (points.champion || 0) + (points.runnerUp || 0) + (points.thirdPlace || 0);
+  const items = [
+    { label: 'Partidos fase de grupos', value: 72 * maxExact('group') },
+    { label: 'Posiciones fase de grupos', value: 48 * (points.groupPosition || 0) },
+    { label: 'Dieciseisavos: partidos y avances', value: (16 * maxExact('round32')) + (32 * (points.qualifiedRound32 || 0)) },
+    { label: 'Octavos: partidos y avances', value: (8 * maxExact('round16')) + (16 * (points.qualifiedRound16 || 0)) },
+    { label: 'Cuartos: partidos y avances', value: (4 * maxExact('quarter')) + (8 * (points.qualifiedQuarter || 0)) },
+    { label: 'Semifinales: partidos y avances', value: (2 * maxExact('semi')) + (4 * (points.qualifiedSemi || 0)) },
+    { label: 'Final: partido y campeón', value: maxExact('final') + (2 * (points.qualifiedFinal || 0)) },
+    { label: 'Cuadro de honor', value: honorMax },
+    { label: 'Premios individuales', value: awardMax }
+  ].filter((item) => item.value > 0);
+
+  $('#phaseMaxPoints').innerHTML = `
+    <div class="phase-max-title">Máximos por fase</div>
+    <div class="phase-max-grid">
+      ${items.map((item) => `
+        <div class="phase-max-item">
+          <span>${esc(item.label)}</span>
+          <strong>${item.value}</strong>
+        </div>
+      `).join('')}
+    </div>
+  `;
 }
 
 function renderParticipantDetails() {
@@ -348,27 +406,116 @@ function renderParticipantDetails() {
   $('#detailSubtitle').textContent = `${person.name} · ${person.total} puntos · ${person.exactScores} exactos`;
   const events = person.events || [];
   const predictionButton = `<button class="small-button wide prediction-open-detail" data-id="${esc(person.id)}" type="button">Ver predicciones</button>`;
-  $('#participantDetails').innerHTML = predictionButton + (events.length ? events.map((e) => `
-    <div class="detail-event">
-      <strong>${esc(displayTeamsText(e.label || e.type))} <span class="points-pill">+${e.points}</span></strong>
-      <div class="detail-meta">Predicción: ${esc(displayTeamsText(e.prediction || ''))}${e.actual ? ` · Real: ${esc(displayTeamsText(e.actual))}` : ''}</div>
-      ${e.details ? `<div class="detail-meta">${esc(displayTeamsText(e.details))}</div>` : ''}
-    </div>
-  `).join('') : `<div class="empty">Todavía no tiene aciertos computados.</div>`);
+  $('#participantDetails').innerHTML = predictionButton + (events.length ? groupedDetailEvents(events) : `<div class="empty">Todavía no tiene aciertos computados.</div>`);
   document.querySelector('.prediction-open-detail')?.addEventListener('click', (ev) => {
     ev.stopPropagation();
     openPredictions(ev.currentTarget.dataset.id);
   });
 }
 
+function toggleDetailGroup(button) {
+  const group = button.closest('.detail-group');
+  if (!group) return;
+  const willOpen = !group.classList.contains('open');
+  document.querySelectorAll('#participantDetails .detail-group.open').forEach((other) => {
+    if (other !== group) {
+      other.classList.remove('open');
+      other.querySelector('.detail-group-header')?.setAttribute('aria-expanded', 'false');
+    }
+  });
+  group.classList.toggle('open', willOpen);
+  button.setAttribute('aria-expanded', String(willOpen));
+  if (!willOpen) return;
+  requestAnimationFrame(() => {
+    const container = $('#participantDetails');
+    if (!container) return;
+    container.scrollTop = Math.max(0, group.offsetTop - 8);
+  });
+}
+
+function groupedDetailEvents(events) {
+  const groups = new Map(detailGroupDefinitions().map((group) => [group.key, []]));
+  for (const event of events) {
+    const key = detailGroupKey(event);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(event);
+  }
+  return [...groups.entries()].sort((a, b) => detailGroupOrder(a[0]) - detailGroupOrder(b[0])).map(([key, rows], index) => {
+    const total = rows.reduce((sum, event) => sum + (event.points || 0), 0);
+    const label = detailGroupLabel(key);
+    const open = index === 0;
+    return `
+      <article class="detail-group ${open ? 'open' : ''}">
+        <button class="detail-group-header" type="button" aria-expanded="${open ? 'true' : 'false'}" onclick="toggleDetailGroup(this)">
+          <span class="detail-toggle">▸</span>
+          <h3>${esc(label)}</h3>
+          <span>${total} pts</span>
+        </button>
+        <div class="detail-group-body">
+          ${rows.length ? rows.map((e) => detailEventHtml(e)).join('') : `<div class="detail-empty">Sin puntos todavía.</div>`}
+        </div>
+      </article>
+    `;
+  }).join('');
+}
+
+function detailGroupDefinitions() {
+  return [
+    ['groupMatches', 'Partidos fase de grupos'],
+    ['groupPositions', 'Posiciones fase de grupos'],
+    ['match:round32', 'Dieciseisavos: partidos y avances'],
+    ['match:round16', 'Octavos: partidos y avances'],
+    ['match:quarter', 'Cuartos: partidos y avances'],
+    ['match:semi', 'Semifinales: partidos y avances'],
+    ['match:final', 'Final: partido y campeón'],
+    ['honor', 'Cuadro de honor'],
+    ['awards', 'Premios individuales']
+  ].map(([key, label], order) => ({ key, label, order }));
+}
+
+function detailGroupKey(event) {
+  if (event.type === 'match') return event.stage === 'group' ? 'groupMatches' : `match:${event.stage}`;
+  if (event.type === 'groupPosition') return 'groupPositions';
+  if (event.type === 'qualifier') return qualifierDetailGroup(event.label);
+  if (event.type === 'podium') return 'honor';
+  if (event.type === 'award') return 'awards';
+  return event.stage || event.type || 'other';
+}
+
+function qualifierDetailGroup(label) {
+  const key = normalizeText(label);
+  if (key === 'clasificado para dieciseisavos') return 'match:round32';
+  if (key === 'clasificado para octavos') return 'match:round16';
+  if (key === 'clasificado para cuartos') return 'match:quarter';
+  if (key === 'clasificado para semifinales') return 'match:semi';
+  if (key === 'clasificado para la final') return 'match:final';
+  return `qualifier:${key}`;
+}
+
+function detailGroupLabel(key) {
+  return detailGroupDefinitions().find((group) => group.key === key)?.label || stageName(key.split(':').at(-1)) || key;
+}
+
+function detailGroupOrder(key) {
+  return detailGroupDefinitions().find((group) => group.key === key)?.order ?? 999;
+}
+
+function detailEventHtml(e) {
+  return `
+    <div class="detail-event">
+      <strong>${esc(displayTeamsText(e.label || e.type))} <span class="points-pill">+${e.points}</span></strong>
+      <div class="detail-meta">Predicción: ${esc(displayTeamsText(e.prediction || ''))}${e.actual ? ` · Real: ${esc(displayTeamsText(e.actual))}` : ''}</div>
+      ${e.details ? `<div class="detail-meta">${esc(displayTeamsText(e.details))}</div>` : ''}
+    </div>
+  `;
+}
+
 function renderMatches() {
   const matches = state.dashboard?.actual?.matches || [];
-  const visible = matches
-    .filter((m) => m.homeTeam || m.awayTeam)
-    .sort(compareMatchesByKickoff)
-    .slice(0, 16);
+  const visible = matches.filter((m) => m.homeTeam || m.awayTeam).sort(compareMatchesByKickoff);
+  const lastFinished = [...visible].reverse().find((m) => m.finished);
   $('#matchesList').innerHTML = visible.length ? visible.map((m) => `
-    <div class="match ${m.finished ? 'finished' : ''}">
+    <div class="match ${m.finished ? 'finished' : ''}" data-match-number="${esc(m.matchNumber)}">
       <div>
         <div class="match-title">${esc(displayTeam(m.homeTeam) || 'Por definir')} - ${esc(displayTeam(m.awayTeam) || 'Por definir')}</div>
         <div class="match-meta">#${esc(m.matchNumber)} · ${esc(stageName(m.stage))}${m.group ? ` · Grupo ${esc(m.group)}` : ''}${m.venue ? ` · ${esc(m.venue)}` : ''}</div>
@@ -377,6 +524,127 @@ function renderMatches() {
       <div class="score">${m.homeScore ?? '–'}-${m.awayScore ?? '–'}</div>
     </div>
   `).join('') : `<div class="empty">La API aún no ha devuelto partidos normalizables.</div>`;
+  if (lastFinished) {
+    requestAnimationFrame(() => {
+      const list = $('#matchesList');
+      const target = list?.querySelector(`[data-match-number="${CSS.escape(String(lastFinished.matchNumber))}"]`);
+      if (!list || !target) return;
+      list.scrollTop = target.offsetTop - (list.clientHeight / 2) + (target.clientHeight / 2);
+    });
+  }
+}
+
+function renderPlayoffBracket() {
+  const matches = state.dashboard?.actual?.matches || [];
+  const byNumber = new Map(matches.map((match) => [Number(match.matchNumber), match]));
+  const width = 1320;
+  const height = 660;
+  const columns = [70, 240, 395, 555, 660, 765, 925, 1080, 1250];
+  const r32Y = [70, 140, 210, 280, 380, 450, 520, 590];
+  const r16Y = [105, 245, 415, 555];
+  const qfY = [175, 485];
+  const sfY = [330];
+  const leftR32 = [74, 77, 73, 75, 83, 84, 81, 82];
+  const rightR32 = [76, 78, 79, 80, 86, 88, 85, 87];
+  const leftR16 = [89, 90, 93, 94];
+  const rightR16 = [91, 92, 95, 96];
+  const left = {
+    r32: leftR32.map((n, i) => bracketNode(n, columns[0], r32Y[i], byNumber.get(n))),
+    r16: leftR16.map((n, i) => bracketNode(n, columns[1], r16Y[i], byNumber.get(n))),
+    qf: range(97, 98).map((n, i) => bracketNode(n, columns[2], qfY[i], byNumber.get(n))),
+    sf: [bracketNode(101, columns[3], sfY[0], byNumber.get(101))]
+  };
+  const right = {
+    r32: rightR32.map((n, i) => bracketNode(n, columns[8], r32Y[i], byNumber.get(n), true)),
+    r16: rightR16.map((n, i) => bracketNode(n, columns[7], r16Y[i], byNumber.get(n), true)),
+    qf: range(99, 100).map((n, i) => bracketNode(n, columns[6], qfY[i], byNumber.get(n), true)),
+    sf: [bracketNode(102, columns[5], sfY[0], byNumber.get(102), true)]
+  };
+  const final = bracketNode(104, columns[4], 142, byNumber.get(104), false, 190, 70);
+  const nodes = [...left.r32, ...left.r16, ...left.qf, ...left.sf, final, ...right.sf, ...right.qf, ...right.r16, ...right.r32];
+  const links = [
+    ...bracketLinks(left.r32, left.r16),
+    ...bracketLinks(left.r16, left.qf),
+    ...bracketLinks(left.qf, left.sf),
+    ...bracketLinks(right.r32, right.r16),
+    ...bracketLinks(right.r16, right.qf),
+    ...bracketLinks(right.qf, right.sf)
+  ];
+  $('#playoffBracket').innerHTML = `
+    <svg class="playoff-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="Cuadro de eliminatorias del Mundial 2026">
+      <defs>
+        <radialGradient id="pitchGlow" cx="50%" cy="58%" r="62%">
+          <stop offset="0%" stop-color="rgba(255,248,219,.14)"></stop>
+          <stop offset="58%" stop-color="rgba(120,0,22,.20)"></stop>
+          <stop offset="100%" stop-color="rgba(8,0,3,.82)"></stop>
+        </radialGradient>
+      </defs>
+      <rect x="0" y="0" width="${width}" height="${height}" rx="8" class="playoff-bg"></rect>
+      <ellipse cx="${width / 2}" cy="${height + 28}" rx="520" ry="210" fill="url(#pitchGlow)"></ellipse>
+      ${playoffTitle(70, 28, 'Dieciseisavos')}
+      ${playoffTitle(240, 28, 'Octavos')}
+      ${playoffTitle(395, 28, 'Cuartos')}
+      ${playoffTitle(555, 28, 'Semifinal')}
+      ${playoffTitle(660, 78, 'Final')}
+      ${playoffTitle(765, 28, 'Semifinal')}
+      ${playoffTitle(925, 28, 'Cuartos')}
+      ${playoffTitle(1080, 28, 'Octavos')}
+      ${playoffTitle(1250, 28, 'Dieciseisavos')}
+      ${links.join('')}
+      ${nodes.map(playoffNodeSvg).join('')}
+    </svg>
+  `;
+}
+
+function range(start, end) {
+  return Array.from({ length: end - start + 1 }, (_, index) => start + index);
+}
+
+function bracketNode(matchNumber, x, y, match, right = false, w = 132, h = 46) {
+  return { matchNumber, x, y, match, right, w, h };
+}
+
+function bracketLinks(fromNodes, toNodes) {
+  return fromNodes.map((from, index) => {
+    const to = toNodes[Math.floor(index / 2)];
+    const fromX = from.right ? from.x - from.w / 2 : from.x + from.w / 2;
+    const toX = to.right ? to.x + to.w / 2 : to.x - to.w / 2;
+    const midX = (fromX + toX) / 2;
+    return `<path d="M ${fromX} ${from.y} H ${midX} V ${to.y} H ${toX}" class="playoff-line"></path>`;
+  });
+}
+
+function playoffNodeSvg(node) {
+  const { match } = node;
+  const x = node.x - node.w / 2;
+  const y = node.y - node.h / 2;
+  const home = displayTeam(match?.homeTeam) || 'Por definir';
+  const away = displayTeam(match?.awayTeam) || 'Por definir';
+  const homeLine = bracketTeamLine(home, match, 'home');
+  const awayLine = bracketTeamLine(away, match, 'away');
+  return `
+    <g class="playoff-node ${node.matchNumber === 104 ? 'final' : ''} ${match?.finished ? 'finished' : ''}">
+      <rect x="${x}" y="${y}" width="${node.w}" height="${node.h}" rx="8"></rect>
+      <text x="${node.x}" y="${node.y - 7}" text-anchor="middle">${esc(shortTeam(homeLine))}</text>
+      <text x="${node.x}" y="${node.y + 12}" text-anchor="middle">${esc(shortTeam(awayLine))}</text>
+    </g>
+  `;
+}
+
+function bracketTeamLine(team, match, side) {
+  if (!match?.finished) return team;
+  const score = side === 'home' ? match.homeScore : match.awayScore;
+  const penalty = side === 'home' ? match.homePenaltyScore : match.awayPenaltyScore;
+  const hasPenalty = penalty !== null && penalty !== undefined && penalty !== '';
+  return `${team} ${score ?? '-'}${hasPenalty ? ` (${penalty})` : ''}`;
+}
+
+function playoffTitle(x, y, label) {
+  return `<text x="${x}" y="${y}" text-anchor="middle" class="playoff-title">${esc(label)}</text>`;
+}
+
+function shortTeam(team) {
+  return String(team || '').length > 18 ? `${String(team).slice(0, 16)}…` : team;
 }
 
 function matchDateLabel(match) {
@@ -455,7 +723,10 @@ function renderGroups() {
       <div class="mini-matches">
         ${groupMatches.map((m) => `
           <div class="mini-match ${m.finished ? 'finished' : ''}">
-            <span>${esc(displayTeam(m.homeTeam) || 'Por definir')} - ${esc(displayTeam(m.awayTeam) || 'Por definir')}</span>
+            <div class="mini-match-main">
+              <span>${esc(displayTeam(m.homeTeam) || 'Por definir')} - ${esc(displayTeam(m.awayTeam) || 'Por definir')}</span>
+              <small>${esc(matchDateLabel(m))}</small>
+            </div>
             <strong>${m.homeScore ?? '–'}-${m.awayScore ?? '–'}</strong>
           </div>
         `).join('') || `<div class="muted">Pendiente</div>`}
@@ -469,11 +740,14 @@ function openPredictions(participantId) {
   renderPredictionsPanel();
   $('#predictionsModal').classList.add('open');
   $('#predictionsModal').setAttribute('aria-hidden', 'false');
+  syncModalState();
+  requestAnimationFrame(() => $('#closePredictionsBtn').focus());
 }
 
 function closePredictions() {
   $('#predictionsModal').classList.remove('open');
   $('#predictionsModal').setAttribute('aria-hidden', 'true');
+  syncModalState();
 }
 
 function renderPredictionsPanel() {
@@ -655,13 +929,32 @@ function predictedTeams(prediction) {
 
 function matchTeamsPrediction(prediction, actual) {
   const teams = predictedTeams(prediction);
-  return sameTeamName(teams.home, actual?.homeTeam) && sameTeamName(teams.away, actual?.awayTeam);
+  const checks = [
+    [teams.home, actual?.homeTeam],
+    [teams.away, actual?.awayTeam]
+  ].filter(([team]) => isConcreteTeam(team));
+  return !checks.length || checks.every(([predicted, real]) => sameTeamName(predicted, real));
 }
 
 function sameTeamName(a, b) {
   const left = normalizeText(TEAM_ES[a] || a);
   const right = normalizeText(TEAM_ES[b] || b);
   return Boolean(left && right && left === right);
+}
+
+function isConcreteTeam(value) {
+  const text = String(value || '').trim();
+  const norm = normalizeText(text);
+  if (!text) return false;
+  if (norm.includes('grupo') || norm.includes('finalista') || norm.includes('escribe un jugador')) return false;
+  if (/^[wl](f|\d*)$/i.test(text)) return false;
+  if (/^w[0-9]+$/i.test(text) || /^l[0-9]+$/i.test(text)) return false;
+  if (/^\d+[a-l]$/i.test(text)) return false;
+  if (/^\d+[a-l]{2,}$/i.test(text)) return false;
+  if (/^[a-l]$/i.test(text)) return false;
+  if (/^[0-9]+º/.test(text)) return false;
+  if (/^[0-9]+\|/.test(text)) return false;
+  return true;
 }
 
 function predictionDateText(prediction) {
@@ -674,8 +967,9 @@ function matchPredictionStatus(prediction) {
   if (!prediction?.valid || !actual?.finished) {
     return { className: 'status-pending', label: 'Pendiente', actualText: actual ? `${actual.homeScore ?? '-'}-${actual.awayScore ?? '-'}` : '', matchNumber: actual?.matchNumber };
   }
-  const exact = Number(prediction.homeGoals) === Number(actual.homeScore) && Number(prediction.awayGoals) === Number(actual.awayScore);
-  const sign = scoreSign(prediction.homeGoals, prediction.awayGoals) === scoreSign(actual.homeScore, actual.awayScore);
+  const teamsMatch = matchTeamsPrediction(prediction, actual);
+  const exact = teamsMatch && Number(prediction.homeGoals) === Number(actual.homeScore) && Number(prediction.awayGoals) === Number(actual.awayScore);
+  const sign = teamsMatch && scoreSign(prediction.homeGoals, prediction.awayGoals) === scoreSign(actual.homeScore, actual.awayScore);
   return {
     className: exact ? 'status-exact' : (sign ? 'status-hit' : 'status-miss'),
     label: exact ? 'Resultado exacto' : (sign ? 'Ganador/empate' : 'Fallado'),
@@ -741,6 +1035,7 @@ function render() {
   renderLeaderboard();
   renderParticipantDetails();
   renderMatches();
+  renderPlayoffBracket();
   renderQualified();
   renderGroups();
 }
@@ -751,6 +1046,8 @@ function openGame() {
   updateGameHud();
   $('#gameModal').classList.add('open');
   $('#gameModal').setAttribute('aria-hidden', 'false');
+  syncModalState();
+  requestAnimationFrame(() => $('#closeGameBtn').focus());
   resizePenaltyCanvas();
   startGameLoop();
 }
@@ -759,6 +1056,7 @@ function closeGame() {
   game.open = false;
   $('#gameModal').classList.remove('open');
   $('#gameModal').setAttribute('aria-hidden', 'true');
+  syncModalState();
   if (game.raf) cancelAnimationFrame(game.raf);
   game.raf = null;
 }
@@ -766,11 +1064,18 @@ function closeGame() {
 function openLobato() {
   $('#lobatoModal').classList.add('open');
   $('#lobatoModal').setAttribute('aria-hidden', 'false');
+  syncModalState();
+  requestAnimationFrame(() => $('#closeLobatoBtn').focus());
 }
 
 function closeLobato() {
   $('#lobatoModal').classList.remove('open');
   $('#lobatoModal').setAttribute('aria-hidden', 'true');
+  syncModalState();
+}
+
+function syncModalState() {
+  document.body.classList.toggle('modal-open', Boolean(document.querySelector('.modal.open')));
 }
 
 function resetPenaltyBall() {
@@ -1098,7 +1403,19 @@ function shootPenalty() {
   updateGameHud();
 }
 
+let cheerTimer = null;
+function cheerSpain() {
+  const hero = document.querySelector('.hero');
+  hero.classList.remove('cheering');
+  window.clearTimeout(cheerTimer);
+  requestAnimationFrame(() => {
+    hero.classList.add('cheering');
+    cheerTimer = window.setTimeout(() => hero.classList.remove('cheering'), 1700);
+  });
+}
+
 $('#refreshBtn').addEventListener('click', forceRefresh);
+$('#cheerSpainBtn').addEventListener('click', cheerSpain);
 $('#openLobatoBtn').addEventListener('click', openLobato);
 $('#closeLobatoBtn').addEventListener('click', closeLobato);
 $('#lobatoModal').addEventListener('click', (ev) => {
@@ -1135,9 +1452,22 @@ window.addEventListener('resize', () => {
   resizePenaltyCanvas();
   drawPenaltyGame();
 });
+let chartResizeTimer = null;
+window.addEventListener('resize', () => {
+  window.clearTimeout(chartResizeTimer);
+  chartResizeTimer = window.setTimeout(renderHistoryChart, 120);
+});
 $('#searchInput').addEventListener('input', (ev) => {
   filter = ev.target.value;
   renderLeaderboard();
+});
+
+$('#participantDetails').addEventListener('click', (ev) => {
+  const button = ev.target.closest('.detail-group-header');
+  if (!button) return;
+  if (button.hasAttribute('onclick')) return;
+  ev.preventDefault();
+  toggleDetailGroup(button);
 });
 
 $('#groupSelect').addEventListener('change', (ev) => {
@@ -1148,6 +1478,12 @@ $('#groupSelect').addEventListener('change', (ev) => {
 $('#closePredictionsBtn').addEventListener('click', closePredictions);
 $('#predictionsModal').addEventListener('click', (ev) => {
   if (ev.target.id === 'predictionsModal') closePredictions();
+});
+document.addEventListener('keydown', (ev) => {
+  if (ev.key !== 'Escape') return;
+  if ($('#lobatoModal').classList.contains('open')) closeLobato();
+  else if ($('#gameModal').classList.contains('open')) closeGame();
+  else if ($('#predictionsModal').classList.contains('open')) closePredictions();
 });
 
 loadDashboard();

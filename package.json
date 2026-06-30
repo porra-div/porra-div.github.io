@@ -7,7 +7,7 @@
     "start": "node server/index.js",
     "dev": "node server/index.js",
     "build:pages": "node scripts/build-pages.js",
-    "check": "node --check server/index.js && node --check server/scoring.js && node --check server/excelImporter.js && node --check server/apiClient.js && node --check scripts/build-pages.js"
+    "check": "node --check server/index.js && node --check server/scoring.js && node --check server/excelImporter.js && node --check server/apiClient.js && node --check scripts/build-pages.js && node --check public/app.js && node --check test/scoring.test.js && node test/scoring.test.js"
   },
   "dependencies": {
     "express": "^4.19.2",

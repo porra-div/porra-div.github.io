@@ -168,6 +168,8 @@ function normalizeGames(raw) {
       awayTeam: getTeamFromMatch(game, 'away'),
       homeScore,
       awayScore,
+      homePenaltyScore: asNumber(readPath(game, ['homePenaltyScore', 'home_penalty_score', 'homePenalties', 'home_penalties', 'penalties.home'])),
+      awayPenaltyScore: asNumber(readPath(game, ['awayPenaltyScore', 'away_penalty_score', 'awayPenalties', 'away_penalties', 'penalties.away'])),
       status: toText(statusRaw || ''),
       finished: isFinishedStatus(statusRaw),
       winnerTeam: normalizeTeamObject(readPath(game, ['winner.name', 'winner', 'winnerTeam.name', 'winner_team.name', 'winnerTeam', 'winner_team'])),

@@ -29,8 +29,11 @@ function predictedTeams(prediction) {
 
 function matchTeamsPrediction(prediction, actual) {
   const teams = predictedTeams(prediction);
-  const includesRealTeams = isRealTeam(teams.home) && isRealTeam(teams.away);
-  return !includesRealTeams || (sameTeam(teams.home, actual?.homeTeam) && sameTeam(teams.away, actual?.awayTeam));
+  const checks = [
+    [teams.home, actual?.homeTeam],
+    [teams.away, actual?.awayTeam]
+  ].filter(([predicted]) => isRealTeam(predicted));
+  return !checks.length || checks.every(([predicted, real]) => sameTeam(predicted, real));
 }
 
 function findActualMatchForPrediction(prediction, actual) {
@@ -52,7 +55,13 @@ function winnerFromMatch(match) {
   if (match.winnerTeam) return canonicalTeamName(match.winnerTeam);
   const h = asNumber(match.homeScore);
   const a = asNumber(match.awayScore);
-  if (h === null || a === null || h === a) return '';
+  if (h === null || a === null) return '';
+  if (h === a) {
+    const hp = asNumber(match.homePenaltyScore);
+    const ap = asNumber(match.awayPenaltyScore);
+    if (hp === null || ap === null || hp === ap) return '';
+    return hp > ap ? match.homeTeam : match.awayTeam;
+  }
   return h > a ? match.homeTeam : match.awayTeam;
 }
 
@@ -61,7 +70,13 @@ function loserFromMatch(match) {
   if (match.loserTeam) return canonicalTeamName(match.loserTeam);
   const h = asNumber(match.homeScore);
   const a = asNumber(match.awayScore);
-  if (h === null || a === null || h === a) return '';
+  if (h === null || a === null) return '';
+  if (h === a) {
+    const hp = asNumber(match.homePenaltyScore);
+    const ap = asNumber(match.awayPenaltyScore);
+    if (hp === null || ap === null || hp === ap) return '';
+    return hp > ap ? match.awayTeam : match.homeTeam;
+  }
   return h > a ? match.awayTeam : match.homeTeam;
 }
 
@@ -221,6 +236,41 @@ function losersForRange(matchMap, start, end) {
   return uniqueByTeam(losers);
 }
 
+function lastFinishedMatchNumber(games, predicate) {
+  return Math.max(0, ...(games || [])
+    .filter((match) => match.finished && predicate(match))
+    .map((match) => Number(match.matchNumber) || 0));
+}
+
+function groupCompletedAtMatchNumber(actual, group) {
+  if ((actual.completedByGroup?.[group] || 0) < 6) return 0;
+  return lastFinishedMatchNumber(actual.games, (match) => match.stage === 'group' && match.group === group);
+}
+
+function teamQualifiedAtMatchNumber(actual, key, team) {
+  if (!team) return 0;
+  if (key === 'round32') {
+    return lastFinishedMatchNumber(actual.games, (match) => match.stage === 'group');
+  }
+
+  const ranges = {
+    round16: [73, 88],
+    quarter: [89, 96],
+    semi: [97, 100],
+    thirdPlaceGame: [101, 102],
+    final: [101, 102]
+  };
+  const [start, end] = ranges[key] || [];
+  if (!start || !end) return 0;
+
+  for (let n = start; n <= end; n++) {
+    const match = actual.matchMap.get(n);
+    const qualified = key === 'thirdPlaceGame' ? loserFromMatch(match) : winnerFromMatch(match);
+    if (sameTeam(team, qualified)) return Number(match.matchNumber) || n;
+  }
+  return 0;
+}
+
 function buildActualFacts(apiData) {
   const games = apiData.games || [];
   const matchMap = buildMatchMap(games);
@@ -338,6 +388,11 @@ function scoreParticipant(participant, apiData, manualAwards = {}) {
   const matchTimeline = [];
   let total = 0;
 
+  function addTimeline(matchNumber, label, points, type = 'bonus') {
+    if (!points || !matchNumber) return;
+    matchTimeline.push({ matchNumber, label, points, type });
+  }
+
   for (const [matchNumberRaw, prediction] of Object.entries(participant.predictions.matches || {})) {
     const matchNumber = Number(matchNumberRaw);
     const actualMatch = findActualMatchForPrediction(prediction, actual);
@@ -369,9 +424,11 @@ function scoreParticipant(participant, apiData, manualAwards = {}) {
   const groupPosition = scoreGroupPositions(participant, actual);
   total += groupPosition.points;
   breakdown.group += groupPosition.points;
-  groupPosition.rows.filter((r) => r.points).forEach((r) => events.push({
-    type: 'groupPosition', stage: 'group', label: `${r.position}º Grupo ${r.group}`, prediction: r.prediction, actual: r.actual, points: r.points
-  }));
+  groupPosition.rows.filter((r) => r.points).forEach((r) => {
+    const label = `${r.position}º Grupo ${r.group}`;
+    events.push({ type: 'groupPosition', stage: 'group', label, prediction: r.prediction, actual: r.actual, points: r.points });
+    addTimeline(groupCompletedAtMatchNumber(actual, r.group), label, r.points, 'groupPosition');
+  });
 
   const qualifierChecks = [
     ['round32', POINTS.qualifiedRound32, 'Clasificado para dieciseisavos', 'group'],
@@ -386,18 +443,28 @@ function scoreParticipant(participant, apiData, manualAwards = {}) {
     const res = scoreTeamList(participant.predictions.qualifiers[key], actual.qualified[key], pts, label);
     total += res.points;
     breakdown[stageBucket] += res.points;
-    res.hits.forEach((team) => events.push({ type: 'qualifier', stage: stageBucket, label, prediction: team, actual: team, points: pts }));
+    if (!pts) continue;
+    res.hits.forEach((team) => {
+      events.push({ type: 'qualifier', stage: stageBucket, label, prediction: team, actual: team, points: pts });
+      addTimeline(teamQualifiedAtMatchNumber(actual, key, team), `${label}: ${team}`, pts, 'qualifier');
+    });
   }
 
   const podium = scorePodium(participant, actual);
   total += podium.points;
   breakdown.honor += podium.points;
-  podium.rows.filter((r) => r.points).forEach((r) => events.push({ type: 'podium', stage: 'honor', ...r }));
+  podium.rows.filter((r) => {
+    if (r.points) addTimeline(104, r.label, r.points, 'honor');
+    return r.points;
+  }).forEach((r) => events.push({ type: 'podium', stage: 'honor', ...r }));
 
   const awards = scoreAwards(participant, manualAwards);
   total += awards.points;
   breakdown.awards += awards.points;
-  awards.rows.filter((r) => r.points).forEach((r) => events.push({ type: 'award', stage: 'awards', ...r }));
+  awards.rows.filter((r) => {
+    if (r.points) addTimeline(104, r.label, r.points, 'awards');
+    return r.points;
+  }).forEach((r) => events.push({ type: 'award', stage: 'awards', ...r }));
 
   const exactScores = events.filter((e) => e.type === 'match' && String(e.details || '').includes('Resultado exacto')).length;
   return {
@@ -409,8 +476,24 @@ function scoreParticipant(participant, apiData, manualAwards = {}) {
     exactScores,
     hits: events.length,
     timeline: matchTimeline.sort((a, b) => a.matchNumber - b.matchNumber),
-    events: events.sort((a, b) => (b.points || 0) - (a.points || 0)).slice(0, 30)
+    events: events.sort(compareScoreEvents)
   };
+}
+
+function compareScoreEvents(a, b) {
+  const order = {
+    group: 1,
+    round32: 2,
+    round16: 3,
+    quarter: 4,
+    semi: 5,
+    final: 6,
+    honor: 7,
+    awards: 8
+  };
+  return (order[a.stage] || 99) - (order[b.stage] || 99) ||
+    (Number(a.matchNumber) || 999) - (Number(b.matchNumber) || 999) ||
+    String(a.label || '').localeCompare(String(b.label || ''));
 }
 
 function makeLeaderboard(participants, apiData, manualAwards = {}) {
@@ -458,6 +541,8 @@ function fallbackMatchesFromPredictions(participants) {
     awayTeam: p.awayLabel,
     homeScore: null,
     awayScore: null,
+    homePenaltyScore: null,
+    awayPenaltyScore: null,
     status: 'Pendiente',
     finished: false,
     kickoff: '',
@@ -476,6 +561,8 @@ function scoreDashboard(participants, apiData, manualAwards = {}) {
     awayTeam: m.awayTeam,
     homeScore: m.homeScore,
     awayScore: m.awayScore,
+    homePenaltyScore: m.homePenaltyScore,
+    awayPenaltyScore: m.awayPenaltyScore,
     status: m.status,
     finished: m.finished,
     kickoff: m.kickoff,
