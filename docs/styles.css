@@ -544,6 +544,7 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
 }
 .total { font-size: 18px; font-weight: 950; color: var(--yellow); }
 .stage-chip { color: #ffd9b8; font-size: 13px; font-weight: 850; }
+.mobile-score { display: none; }
 
 .details-card {
   align-self: stretch;
@@ -1068,7 +1069,7 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
   .layout, .two-cols, .groups-grid, .prediction-grid, .prediction-grid.predictions-only, .scoring-grid { grid-template-columns: 1fr; }
   .leaderboard-card,
   .details-card { height: auto; max-height: none; }
-  .details { max-height: 440px; }
+  .details { max-height: 620px; }
   .prediction-card:first-child { grid-row: auto; }
   .chart-legend { grid-template-columns: 1fr !important; }
   .lobato-stage { min-height: 300px; }
@@ -1095,6 +1096,29 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
   .chart-card { min-height: 390px; }
   .chart-legend span { font-size: 16px; }
   .match { align-items: flex-start; }
+  .playoff-card {
+    overflow: visible;
+  }
+  .playoff-bracket {
+    overflow-x: hidden;
+    padding-bottom: 0;
+  }
+  .playoff-svg {
+    width: 100%;
+    min-height: 0;
+  }
+  .playoff-title {
+    font-size: 20px;
+  }
+  .playoff-node text {
+    font-size: 16px;
+  }
+  .playoff-node.final text {
+    font-size: 18px;
+  }
+  .phase-max-menu {
+    display: none;
+  }
   .predictions-matches {
     min-width: 0;
   }
@@ -1103,37 +1127,74 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
     padding: 10px;
   }
   .leaderboard-card .table-wrap {
-    overflow-x: hidden;
+    overflow: visible;
+    border: 0;
+    background: transparent;
   }
   #leaderboardTable {
+    display: block;
     min-width: 0;
-    table-layout: fixed;
   }
-  #leaderboardTable th,
+  #leaderboardTable thead {
+    display: none;
+  }
+  #leaderboardTable tbody {
+    display: grid;
+    gap: 8px;
+  }
+  #leaderboardTable tr {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    grid-template-areas: "rank name";
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: 1px solid rgba(255, 224, 167, .18);
+    border-radius: 8px;
+    background: rgba(255,255,255,.045);
+  }
+  #leaderboardTable tr.active {
+    background: rgba(255, 204, 41, .12);
+    border-color: rgba(255, 204, 41, .38);
+  }
   #leaderboardTable td {
-    padding: 9px 5px;
+    display: block;
+    padding: 0;
+    border: 0;
+    min-width: 0;
   }
-  #leaderboardTable th:nth-child(1),
-  #leaderboardTable td:nth-child(1) {
-    width: 34px;
-  }
-  #leaderboardTable th:nth-child(2),
+  #leaderboardTable td:nth-child(1) { grid-area: rank; }
   #leaderboardTable td:nth-child(2) {
-    width: auto;
-    max-width: 0;
+    grid-area: name;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    overflow: hidden;
+  }
+  #leaderboardTable td:nth-child(2) strong {
+    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  #leaderboardTable th:nth-child(3),
-  #leaderboardTable td:nth-child(3),
-  #leaderboardTable th:nth-child(4),
-  #leaderboardTable td:nth-child(4) {
-    width: 54px;
-    text-align: center;
-  }
-  #leaderboardTable th:nth-child(n+5),
-  #leaderboardTable td:nth-child(n+5) {
+  #leaderboardTable td:nth-child(n+3) {
     display: none;
+  }
+  #leaderboardTable .mobile-score {
+    display: grid;
+    justify-items: end;
+    flex: 0 0 auto;
+  }
+  #leaderboardTable .mobile-score b {
+    color: var(--yellow);
+    font-size: 18px;
+    line-height: 1;
+  }
+  #leaderboardTable .mobile-score small {
+    color: var(--muted);
+    font-size: 11px;
+    font-weight: 850;
+    line-height: 1.15;
   }
   #leaderboardTable .rank {
     width: 24px;
@@ -1144,6 +1205,34 @@ tbody tr:hover, tbody tr.active { background: rgba(255, 204, 41, .10); }
   }
   #leaderboardTable .total {
     font-size: 17px;
+  }
+  .details {
+    max-height: 520px;
+    gap: 6px;
+  }
+  .detail-group-header {
+    min-height: 46px;
+    padding: 8px;
+    gap: 7px;
+  }
+  .detail-group-header h3 {
+    font-size: 12px;
+    line-height: 1.15;
+    white-space: normal;
+  }
+  .detail-group-header span:last-child {
+    font-size: 15px;
+    white-space: nowrap;
+  }
+  .detail-group-body {
+    max-height: 360px;
+    padding: 7px;
+  }
+  .detail-event {
+    padding: 8px;
+  }
+  .detail-event strong {
+    line-height: 1.25;
   }
 }
 

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-30T08:57:23.979Z",
+  "generatedAt": "2026-06-30T09:12:14.516Z",
   "participants": [
     {
       "id": "excel-mundial-2026-adri-xlsx",
@@ -16283,8 +16283,7 @@
       "Ghana",
       "Panama"
     ],
-    "fetchedAt": "2026-06-30T08:55:16.842Z",
-    "source": "https://worldcup26.ir (cache)",
-    "apiWarning": "No se pudo refrescar la API: fetch failed. Usando caché."
+    "fetchedAt": "2026-06-30T09:12:14.506Z",
+    "source": "https://worldcup26.ir"
   }
 }

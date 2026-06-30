@@ -323,7 +323,7 @@ function renderLeaderboard() {
   const html = rows.map((p) => `
     <tr data-id="${esc(p.id)}" class="${p.id === selectedParticipantId ? 'active' : ''}">
       <td><span class="rank ${p.rank <= 3 ? 'top' : ''}">${rankMedal(p.rank) || p.rank}</span></td>
-      <td><strong>${esc(p.name)}</strong></td>
+      <td><strong>${esc(p.name)}</strong><span class="mobile-score"><b>${p.total}</b><small>${p.exactScores} exactos</small></span></td>
       <td><span class="total">${p.total}</span></td>
       <td>${p.exactScores}</td>
       <td><span class="stage-chip">${leaderboardCategoryScore(p, 'groupMatches')}</span></td>
